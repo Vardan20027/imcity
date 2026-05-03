@@ -1,3 +1,4 @@
+import RNBootSplash
 import UIKit
 import React
 import React_RCTAppDelegate
@@ -28,7 +29,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       in: window,
       launchOptions: launchOptions
     )
-
+    DispatchQueue.main.async {
+          if let rootView = self.window?.rootViewController?.view {
+            RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
+          }
+        }
     return true
   }
 }
