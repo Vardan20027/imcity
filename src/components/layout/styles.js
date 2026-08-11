@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/rootStyles';
 import { normalize } from '../../assets/deviceInfo/normalize';
 
-const Styles = theme => {
+const Styles = () => {
   return StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -14,45 +14,17 @@ const Styles = theme => {
     container: {
       flex: 1,
     },
-
-    heroCard: {
+    logoContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
       width: '100%',
-      backgroundColor: COLORS.primary,
-      borderBottomLeftRadius: normalize(32),
-      borderBottomRightRadius: normalize(32),
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingTop: normalize(80),
+      height: normalize(180),
     },
-    logoBox: {
-      width: normalize(72),
-      height: normalize(72),
-      borderRadius: normalize(18),
-      backgroundColor: 'rgba(255,255,255,0.25)',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: normalize(8),
+    logo: {
+      width: normalize(184),
+      height: normalize(211),
+      resizeMode: 'contain',
     },
-    logoI: {
-      fontSize: normalize(28),
-      fontWeight: '700',
-      color: COLORS.white,
-      marginRight: normalize(4),
-    },
-    logoDotsGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      width: normalize(22),
-      gap: normalize(4),
-    },
-    logoDot: {
-      width: normalize(8),
-      height: normalize(8),
-      borderRadius: normalize(4),
-      backgroundColor: COLORS.white,
-    },
-
     body: {
       flexGrow: 1,
       paddingHorizontal: normalize(24),

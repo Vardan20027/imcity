@@ -5,27 +5,42 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MIcon from '../svgs';
-import { ICON_NAMES } from '../svgs/icon_names';
 import { Styles } from './styles';
 import { COLORS } from '../../assets/rootStyles';
 
 const styles = Styles();
 
-const AuthLayout = ({ children }) => (
-  <SafeAreaView style={styles.safeArea}>
-    <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+const AuthLayout = ({
+  children,
+  showLogo = true,
+  keyboardVerticalOffset = 0,
+  containerStyle,
+  barStyle = 'dark-content',
+  testID = 'auth-layout',
+}) => (
+  <SafeAreaView style={styles.safeArea} testID={testID}>
+    <StatusBar barStyle={barStyle} backgroundColor={COLORS.background} />
 
     <KeyboardAvoidingView
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={keyboardVerticalOffset}
     >
-      <View style={styles.container}>
-        <View style={styles.heroCard}>
-          <MIcon name={ICON_NAMES.WHITE_LOGO} />
-        </View>
+      <View style={[styles.container, containerStyle]}>
+        {showLogo && (
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../assets/images/logo.png')}
+              style={styles.logo}
+              accessible
+              accessibilityLabel="App logo"
+              accessibilityRole="image"
+            />
+          </View>
+        )}
 
         <ScrollView
           contentContainerStyle={styles.body}
