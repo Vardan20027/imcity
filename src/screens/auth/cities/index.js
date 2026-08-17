@@ -3,6 +3,7 @@ import { Text, TouchableOpacity } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
 import { Styles } from './styles';
+import OnboardingHeader from '../../../components/onboarding/header';
 
 const CITIES = [
   { id: '1', name: 'Երևան' },
@@ -21,8 +22,9 @@ const ChooseCity = ({ navigation }) => {
   };
 
   return (
-    <AuthLayout>
-      <Text style={styles.title}>Ընտրեք քաղաքը</Text>
+    <AuthLayout showLogo={false}>
+      <OnboardingHeader currentStep={3} totalSteps={5} onBack={() => navigation.goBack()} />
+      <Text style={styles.title}>Ընտրիր քաղաքը</Text>
 
       {CITIES.map((city, index) => {
         const selected = selectedCity === city.id;

@@ -1,4 +1,4 @@
- import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import LANGUAGES from '../../../constants/languages';
 import Button from '../../../components/button';
@@ -7,8 +7,9 @@ import AuthLayout from '../../../components/layout/AuthLayout';
 import { Styles } from './styles';
 
 const LanguageSelectScreen = ({ navigation }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState(null);
+  const [selectedId, setSelectedId] = useState(LANGUAGES[0]?.id ?? null);
   const styles = Styles();
+
   const handleContinue = () => {
     navigation.navigate('Login');
   };
@@ -25,13 +26,12 @@ const LanguageSelectScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.languageList}>
-        {LANGUAGES.map((lang, index) => (
+        {LANGUAGES.map(lang => (
           <LanguageOption
             key={lang.id}
             label={lang.label}
-            selected={selectedLanguage === lang.id}
-            onPress={() => setSelectedLanguage(lang.id)}
-            isLast={index === LANGUAGES.length - 1}
+            selected={lang.id === selectedId}
+            onPress={() => setSelectedId(lang.id)}
           />
         ))}
       </View>
@@ -39,7 +39,7 @@ const LanguageSelectScreen = ({ navigation }) => {
       <Button
         label="Շարունակել"
         onPress={handleContinue}
-        disabled={!selectedLanguage}
+        disabled={!selectedId}
       />
     </AuthLayout>
   );

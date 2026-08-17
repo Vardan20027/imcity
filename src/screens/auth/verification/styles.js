@@ -11,11 +11,10 @@ const Styles = theme => {
       opacity: 0,
     },
     title: {
-      textAlign: 'center',
-      fontSize: normalize(22),
+      fontSize: normalize(16),
       fontWeight: '600',
       color: COLORS.textPrimary,
-      marginBottom: normalize(32),
+      marginBottom: normalize(16),
     },
 
     otpRow: {

@@ -5,6 +5,7 @@ import Button from '../../../components/button';
 import { Styles } from './styles';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import MIcon from '../../../components/svgs';
+import OnboardingHeader from '../../../components/onboarding/header';
 
 const styles = Styles();
 
@@ -16,48 +17,55 @@ const EmotionsScreen = ({ navigation }) => {
       icon: ICON_NAMES.EMOTIONS.CALM,
       color: '#6EAA4E',
       backgroundColor: '#E2F1DA',
-      title: 'Հանգիստ / Հարմարավետ',
+      title: 'Հանգստություն',
     },
     {
       id: 2,
       icon: ICON_NAMES.EMOTIONS.DRIVE,
       color: '#FF8700',
       backgroundColor: '#FFE9E5',
-      title: 'Ակտիվ / Ադրենալին',
+      title: 'Էներգիա',
     },
     {
       id: 3,
       icon: ICON_NAMES.EMOTIONS.ROMANCE,
       color: '#F4466E',
       backgroundColor: '#F7EEEE',
-      title: 'Ռոմանտիկ / Սեր',
+      title: 'Ռոմանտիկա',
     },
     {
       id: 4,
       icon: ICON_NAMES.EMOTIONS.FUN,
       color: '#FFCC00',
       backgroundColor: '#F9F5E4',
-      title: 'Զվարճալի / Ուրախ',
+      title: 'Զվարճանք',
     },
     {
       id: 5,
       icon: ICON_NAMES.EMOTIONS.DISCOVERY,
       color: '#DA61FF',
       backgroundColor: '#F3E8FF',
-      title: 'Բացահայտել / Սովորել',
+      title: 'Բացահայտում',
     },
     {
       id: 6,
       icon: ICON_NAMES.EMOTIONS.WORKING,
       color: '#46A3F4',
       backgroundColor: '#E2F2FF',
-      title: 'Աշխատանք / Բիզնես',
+      title: 'Արդյունավե-\nտություն',
+    },
+    {
+      id: 7,
+      icon: ICON_NAMES.EMOTIONS.INSPIRATION,
+      color: '#46A3F4',
+      backgroundColor: '#E2F2FF',
+      title: 'Ոգեշնչում',
     },
   ];
   const MAX = 3;
 
   const handleContinue = () => {
-    navigation.navigate('Screen');
+    navigation.navigate('Information');
   };
   const toggleSelect = id => {
     setSelectedIds(prev => {
@@ -74,7 +82,12 @@ const EmotionsScreen = ({ navigation }) => {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout showLogo={false}>
+      <OnboardingHeader
+        currentStep={4}
+        totalSteps={5}
+        onBack={() => navigation.goBack()}
+      />
       <Text style={styles.title}>Ինչ ես ուզում զգալ</Text>
       <Text style={styles.subtitle}>Մինչև 3 տարբերակ</Text>
 
@@ -101,10 +114,11 @@ const EmotionsScreen = ({ navigation }) => {
           );
         })}
       </View>
-
+      <Text style={styles.subtitle}>Կարող եք փոխել ցանկացած ժամանակ!</Text>
       <Button
         label="Շարունակել"
         onPress={handleContinue}
+        disabled={selectedIds.length === 0}
         style={styles.button}
       />
 

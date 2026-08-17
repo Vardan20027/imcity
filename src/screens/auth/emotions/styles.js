@@ -5,16 +5,13 @@ import { COLORS } from '../../../assets/rootStyles';
 const Styles = theme => {
   return StyleSheet.create({
     title: {
-      textAlign: 'center',
-      fontSize: normalize(22),
+      fontSize: normalize(16),
       fontWeight: '600',
       color: COLORS.textPrimary,
     },
     subtitle: {
       fontSize: normalize(14),
       color: COLORS.textSecondary,
-      textAlign: 'center',
-      lineHeight: normalize(20),
     },
     container: {
       flexDirection: 'row',
@@ -27,6 +24,7 @@ const Styles = theme => {
     },
     item: {
       width: '48%',
+      minHeight: normalize(50),
       flexDirection: 'row',
       alignItems: 'center',
       padding: normalize(12),

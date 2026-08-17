@@ -5,29 +5,53 @@ import { COLORS } from '../../../assets/rootStyles';
 const Styles = theme => {
   return StyleSheet.create({
     title: {
-      textAlign: 'center',
-      fontSize: normalize(22),
+      fontSize: normalize(16),
       fontWeight: '600',
       color: COLORS.textPrimary,
       marginBottom: normalize(16),
     },
-    input: {
+    phoneRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       borderWidth: 1,
       borderColor: COLORS.border,
       borderRadius: normalize(10),
+      marginBottom: normalize(32),
+    },
+    codePrefix: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: normalize(13),
+      paddingHorizontal: normalize(12),
+      gap: normalize(6),
+    },
+    flag: {
+      width: normalize(20),
+      height: normalize(14),
+      resizeMode: 'cover',
+      borderRadius: normalize(2),
+    },
+    dialCode: {
+      fontSize: normalize(15),
+      color: COLORS.textPrimary,
+    },
+    separator: {
+      width: 1,
+      height: normalize(20),
+      backgroundColor: COLORS.border,
+    },
+    input: {
+      flex: 1,
       paddingHorizontal: normalize(16),
       paddingVertical: normalize(13),
       fontSize: normalize(15),
       color: COLORS.textPrimary,
     },
-    button: {
-      marginBottom: normalize(40),
-    },
     dividerRow: {
+      marginBottom: normalize(16),
       flexDirection: 'row',
       alignItems: 'center',
       gap: normalize(10),
-      marginTop: normalize(80),
     },
     dividerLine: {
       flex: 1,
@@ -47,11 +71,6 @@ const Styles = theme => {
       borderRadius: normalize(10),
       paddingVertical: normalize(13),
       gap: normalize(10),
-    },
-    googleIconText: {
-      fontSize: normalize(12),
-      fontWeight: '700',
-      color: COLORS.white,
     },
     googleLabel: {
       fontSize: normalize(15),

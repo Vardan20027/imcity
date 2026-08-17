@@ -8,6 +8,10 @@ import DiscoveryIcon from './emotions/discovery';
 import DriveIcon from './emotions/drive';
 import RomanceIcon from './emotions/romance';
 import WorkingIcon from './emotions/working';
+import CheckMarkIcon from './checkmark';
+import InspirationIcon from './emotions/inspiration';
+import ArrowBack from './arrows/back';
+import CalendarIcon from './calendar';
 
 export const ICONS = {
   [ICON_NAMES.WHITE_LOGO]: ({ width, height, color }) => (
@@ -15,6 +19,9 @@ export const ICONS = {
   ),
   [ICON_NAMES.SOCIAL.GOOGLE]: ({ width, height, color }) => (
     <GoogleIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.ARROWS.BACK]: ({ width, height, color }) => (
+    <ArrowBack width={width} height={height} color={color} />
   ),
   [ICON_NAMES.EMOTIONS.CALM]: ({ width, height, color }) => (
     <CalmIcon width={width} height={height} color={color} />
@@ -33,5 +40,14 @@ export const ICONS = {
   ),
   [ICON_NAMES.EMOTIONS.WORKING]: ({ width, height, color }) => (
     <WorkingIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.EMOTIONS.INSPIRATION]: ({ width, height, color }) => (
+    <InspirationIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.CHECKMARK]: ({ width, height, color }) => (
+    <CheckMarkIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.CALENDAR]: ({ width, height, color }) => (
+    <CalendarIcon width={width} height={height} color={color} />
   ),
 };

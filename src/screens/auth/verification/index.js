@@ -4,6 +4,7 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
 import { Styles } from './styles';
+import OnboardingHeader from '../../../components/onboarding/header';
 
 const CODE_LENGTH = 4;
 const RESEND_COUNTDOWN = 59;
@@ -55,7 +56,12 @@ const VerificationScreen = ({ navigation, route }) => {
   const canResend = countdown === 0;
 
   return (
-    <AuthLayout>
+    <AuthLayout showLogo={false}>
+      <OnboardingHeader
+        currentStep={2}
+        totalSteps={5}
+        onBack={() => navigation.goBack()}
+      />
       {/* Hidden real input — captures keyboard */}
       <TextInput
         ref={inputRef}

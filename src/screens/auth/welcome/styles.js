@@ -4,6 +4,7 @@ import { COLORS } from '../../../assets/rootStyles';
 
 const Styles = theme => {
   return StyleSheet.create({
+
     titleSection: {
       alignItems: 'center',
       gap: normalize(8),
@@ -29,10 +30,37 @@ const Styles = theme => {
 
     languageList: {
       marginBottom: normalize(40),
-      borderWidth: 1,
+    },
+    button: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: normalize(14),
+      paddingHorizontal: normalize(20),
+      borderRadius: normalize(10),
+      borderWidth: normalize(1),
       borderColor: COLORS.border,
-      borderRadius: normalize(12),
-      overflow: 'hidden',
+      marginBottom: normalize(12),
+    },
+    buttonSelected: {
+      borderColor: COLORS.accentBorder,
+      backgroundColor: COLORS.accentLight,
+    },
+    label: {
+      fontSize: normalize(16),
+      fontWeight: '400',
+      color: COLORS.textPrimary,
+      textAlign: 'center',
+    },
+    labelSelected: {
+      color: COLORS.accent,
+      fontWeight: '500',
+    },
+    checkmark: {
+      position: 'absolute',
+      right: normalize(20),
+      fontSize: normalize(16),
+      color: COLORS.accent,
+      fontWeight: '600',
     },
   });
 };

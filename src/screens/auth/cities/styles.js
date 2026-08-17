@@ -5,10 +5,10 @@ import { COLORS } from '../../../assets/rootStyles';
 const Styles = theme => {
   return StyleSheet.create({
     title: {
-      textAlign: 'center',
-      fontSize: normalize(22),
+      fontSize: normalize(16),
       fontWeight: '600',
       color: COLORS.textPrimary,
+      marginBottom: normalize(16),
     },
     cityRow: {
       flexDirection: 'row',

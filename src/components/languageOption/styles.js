@@ -5,21 +5,26 @@ import { COLORS } from '../../assets/rootStyles';
 const Styles = theme => {
   return StyleSheet.create({
     button: {
+      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
       paddingVertical: normalize(14),
       paddingHorizontal: normalize(20),
-      borderBottomWidth: normalize(1),
-      borderBottomColor: COLORS.border,
+      backgroundColor: 'transparent',
+      borderColor: COLORS.border,
+      borderRadius: normalize(16),
+      borderWidth: normalize(1),
+      marginVertical: normalize(10),
     },
-    buttonLast: {
-      borderBottomWidth: normalize(0),
+    buttonSelected: {
+      backgroundColor: COLORS.accentLight,
+      borderColor: COLORS.accent,
     },
     label: {
+      flex: 1,
+      textAlign: 'center',
       fontSize: normalize(16),
       fontWeight: '400',
       color: COLORS.textPrimary,
-      textAlign: 'center',
     },
     labelSelected: {
       color: COLORS.accent,
@@ -27,10 +32,7 @@ const Styles = theme => {
     },
     checkmark: {
       position: 'absolute',
-      right: normalize(20),
-      fontSize: normalize(16),
-      color: COLORS.accent,
-      fontWeight: '600',
+      right: normalize(80),
     },
   });
 };
