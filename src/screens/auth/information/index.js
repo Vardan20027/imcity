@@ -7,12 +7,16 @@ import OnboardingHeader from '../../../components/onboarding/header';
 import { COLORS } from '../../../assets/rootStyles';
 import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
+import CalendarModal from "../../../components/calendar/calendarModal";
 
 
 const InformationScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [gender, setGender] = useState(null);
+  const [calendarVisible, setCalendarVisible] = useState(false);
+  const [birthdate, setBirthdate] = useState(null);
+
   const genderOptions = [
     { id: 'm', label: 'Արական', value: 'male' },
     { id: 'f', label: 'Իգական', value: 'female' },
@@ -52,8 +56,13 @@ const InformationScreen = ({ navigation }) => {
         maxLength={15}
       />
       <Text style={styles.heading}>Ծննդյան ամսաթիվ</Text>
-      <TouchableOpacity style={styles.birthdate}>
-        <Text style={styles.birthdateText}>Ընտրեք ամսաթիվը</Text>
+      <TouchableOpacity
+        style={styles.birthdate}
+        onPress={() => setCalendarVisible(true)}
+      >
+        <Text style={styles.birthdateText}>
+          {birthdate ? birthdate.toLocaleDateString() : 'Ընտրեք ամսաթիվը'}
+        </Text>
         <MIcon name={ICON_NAMES.CALENDAR} />
       </TouchableOpacity>
 
@@ -81,6 +90,12 @@ const InformationScreen = ({ navigation }) => {
         onPress={handleContinue}
         disabled={name.length === 0}
         style={styles.button}
+      />
+      <CalendarModal
+        visible={calendarVisible}
+        onClose={() => setCalendarVisible(false)}
+        onConfirm={date => setBirthdate(date)}
+        initialDate={birthdate}
       />
     </AuthLayout>
   );
