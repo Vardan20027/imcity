@@ -12,6 +12,9 @@ import CheckMarkIcon from './checkmark';
 import InspirationIcon from './emotions/inspiration';
 import ArrowBack from './arrows/back';
 import CalendarIcon from './calendar';
+import SearchIcon from "./search";
+import PlusIcon from "./plus";
+import ArrowDown from "./arrows/down";
 
 export const ICONS = {
   [ICON_NAMES.WHITE_LOGO]: ({ width, height, color }) => (
@@ -22,6 +25,9 @@ export const ICONS = {
   ),
   [ICON_NAMES.ARROWS.BACK]: ({ width, height, color }) => (
     <ArrowBack width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.ARROWS.DOWN]: ({ width, height, color }) => (
+    <ArrowDown width={width} height={height} color={color} />
   ),
   [ICON_NAMES.EMOTIONS.CALM]: ({ width, height, color }) => (
     <CalmIcon width={width} height={height} color={color} />
@@ -49,5 +55,11 @@ export const ICONS = {
   ),
   [ICON_NAMES.CALENDAR]: ({ width, height, color }) => (
     <CalendarIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.SEARCH]: ({ width, height, color }) => (
+    <SearchIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.PLUS]: ({ width, height, color }) => (
+    <PlusIcon width={width} height={height} color={color} />
   ),
 };

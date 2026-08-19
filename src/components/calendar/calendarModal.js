@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Styles } from './styles';
+import MIcon from "../svgs";
+import {ICON_NAMES} from "../svgs/icon_names";
 const MONTHS = [
   'Jan',
   'Feb',
@@ -90,6 +92,23 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <View style={styles.handle} />
+          <View style={styles.footerRow}>
+            <TouchableOpacity onPress={handleClear}>
+              <Text style={styles.footerActionText}>Չեղարկել</Text>
+            </TouchableOpacity>
+            <Text>Ընտրեք ամսաթիվը</Text>
+
+            <TouchableOpacity onPress={handleConfirm} disabled={!selectedDate}>
+              <Text
+                style={[
+                  styles.footerConfirmText,
+                  !selectedDate && styles.footerConfirmDisabled,
+                ]}
+              >
+                Պահպանել
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.headerRow}>
             <TouchableOpacity
@@ -100,6 +119,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
               }}
             >
               <Text style={styles.dropdownText}>{MONTHS[viewMonth]}</Text>
+              <MIcon name={ICON_NAMES.ARROWS.DOWN} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -110,6 +130,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
               }}
             >
               <Text style={styles.dropdownText}>{viewYear}</Text>
+              <MIcon name={ICON_NAMES.ARROWS.DOWN} />
             </TouchableOpacity>
           </View>
 
@@ -182,27 +203,6 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
               </View>
             </>
           )}
-
-          <View style={styles.footerRow}>
-            <TouchableOpacity onPress={handleClear}>
-              <Text style={styles.footerActionText}>Clear</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={onClose}>
-              <Text style={styles.footerActionText}>Select date</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={handleConfirm} disabled={!selectedDate}>
-              <Text
-                style={[
-                  styles.footerConfirmText,
-                  !selectedDate && styles.footerConfirmDisabled,
-                ]}
-              >
-                Confirm
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </Modal>

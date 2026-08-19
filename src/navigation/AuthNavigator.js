@@ -7,6 +7,7 @@ import VerificationScreen from '../screens/auth/verification';
 import ChooseCity from '../screens/auth/cities';
 import EmotionsScreen from '../screens/auth/emotions';
 import InformationScreen from '../screens/auth/information';
+import AddFriend from '../screens/auth/addFriend';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ const AuthNavigator = () => (
     <Stack.Screen name="ChooseCity" component={ChooseCity} />
     <Stack.Screen name="Emotions" component={EmotionsScreen} />
     <Stack.Screen name="Information" component={InformationScreen} />
+    <Stack.Screen name="AddFriend" component={AddFriend} />
   </Stack.Navigator>
 );
 

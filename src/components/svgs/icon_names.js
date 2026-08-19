@@ -5,9 +5,12 @@ export const ICON_NAMES = {
   },
   ARROWS:{
     BACK: 'arrowBack',
+    DOWN: 'arrowDown',
   },
   CHECKMARK: 'checkMarkIcon',
   CALENDAR: 'calendarIcon',
+  SEARCH: 'searchIcon',
+  PLUS: 'plusIcon',
   EMOTIONS: {
     CALM: 'calmIcon',
     DISCOVERY: 'discoveryIcon',

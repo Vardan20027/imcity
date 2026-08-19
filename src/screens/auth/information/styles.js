@@ -60,7 +60,7 @@ const Styles = theme => {
       backgroundColor: COLORS.primary,
     },
     birthdateText: {
-      color: COLORS.textSecondary,
+      color: COLORS.textPrimary,
     },
     button: {
       marginTop: normalize(30),

@@ -105,7 +105,7 @@ export const COLORS = {
   textPrimary: '#111827',
   textSecondary: '#6B7280',
   border: '#D0D0D0',
-  buttonDisabled: '#D1D5DB',
+  buttonDisabled: '#DADADA',
   buttonDisabledText: '#9CA3AF',
   primary_green: '#dbe050',
   secondary_purple: '#ff00ff',

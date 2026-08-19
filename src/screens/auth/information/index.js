@@ -24,7 +24,7 @@ const InformationScreen = ({ navigation }) => {
   ];
   const styles = Styles();
   const handleContinue = () => {
-    console.log(name, username, gender);
+    navigation.navigate('AddFriend');
   };
 
   return (

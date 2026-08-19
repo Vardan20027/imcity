@@ -32,6 +32,9 @@ const Styles = theme => {
       marginBottom: normalize(12),
     },
     dropdown: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingVertical: normalize(8),
       paddingHorizontal: normalize(14),
       borderRadius: normalize(10),
@@ -42,6 +45,7 @@ const Styles = theme => {
       fontSize: normalize(14),
       fontWeight: '600',
       color: COLORS.textPrimary,
+      marginRight: normalize(10),
     },
     pickerList: {
       maxHeight: normalize(220),
@@ -99,7 +103,7 @@ const Styles = theme => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: normalize(16),
+      marginBottom: normalize(16),
     },
     footerActionText: {
       fontSize: normalize(14),

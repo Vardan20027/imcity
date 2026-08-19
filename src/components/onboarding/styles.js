@@ -13,6 +13,7 @@ const Styles = theme => {
       marginBottom: normalize(16),
     },
     back: {
+      paddingHorizontal: normalize(5),
       position: 'absolute',
       left: 0
     },
