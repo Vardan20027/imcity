@@ -2,10 +2,9 @@ import React from 'react';
 import { TextInput, View } from 'react-native';
 import MIcon from '../svgs';
 import { ICON_NAMES } from '../svgs/icon_names';
-import { Styles } from './styles';
+import styles from './styles';
 
 const SearchBar = ({value, onChange}) => {
-  const styles = Styles();
 
   return (
     <View style={styles.container}>

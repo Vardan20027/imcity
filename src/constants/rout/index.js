@@ -1,0 +1,15 @@
+export const ROUT_NAMES = {
+  APP_LAYER: 'AppLayer',
+  AUTH_LAYER: 'AuthLayer',
+  TAB: 'tabScreens',
+  LOGIN: 'LoginScreen',
+  LANGUAGE: 'LanguageScreen',
+  VERIFICATION: 'VerificationScreen',
+  NOTIFICATIONS: 'NotificationScreen',
+  FILTER: 'FilterScreen',
+  EMOTIONS: 'EmotionsScreen',
+  HOME: 'HomeScreen',
+  MENU: 'MenuScreen',
+  FAVORITES: 'FavoritesScreen',
+  PROFILE: 'ProfileScreen',
+};

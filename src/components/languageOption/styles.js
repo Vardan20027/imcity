@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { normalize } from '../../assets/deviceInfo/normalize';
 import { COLORS } from '../../assets/rootStyles';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     button: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -35,6 +34,5 @@ const Styles = theme => {
       right: normalize(80),
     },
   });
-};
 
-export { Styles };
+export default styles;

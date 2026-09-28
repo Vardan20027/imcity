@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/rootStyles';
 import { normalize } from '../../assets/deviceInfo/normalize';
 
-const Styles = () => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
       backgroundColor: COLORS.background,
@@ -33,6 +32,5 @@ const Styles = () => {
       justifyContent: 'space-between',
     },
   });
-};
 
-export { Styles };
+export default styles;

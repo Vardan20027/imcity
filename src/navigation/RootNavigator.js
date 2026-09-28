@@ -10,12 +10,21 @@ const Stack = createNativeStackNavigator();
 const isAuthenticated = false;
 
 const RootNavigator = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    {isAuthenticated ? (
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false,
+      animation: 'fade',
+      animationDuration: 220,
+      statusBarStyle: 'dark',
+      statusBarBackgroundColor: '#FFFFFF',
+      navigationBarColor: '#FFFFFF',
+    }}
+  >
+    {/*{isAuthenticated ? (*/}
       <Stack.Screen name="App" component={AppNavigator} />
-    ) : (
-      <Stack.Screen name="Auth" component={AuthNavigator} />
-    )}
+     {/*) : (*/}
+     {/*  <Stack.Screen name="Auth" component={AuthNavigator} />*/}
+    {/* )}*/}
   </Stack.Navigator>
 );
 

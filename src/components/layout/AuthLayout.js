@@ -8,21 +8,23 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Styles } from './styles';
+import styles from './styles';
 import { COLORS } from '../../assets/rootStyles';
 
-const styles = Styles();
 
 const AuthLayout = ({
   children,
   showLogo = true,
   keyboardVerticalOffset = 0,
   containerStyle,
-  barStyle = 'dark-content',
   testID = 'auth-layout',
 }) => (
   <SafeAreaView style={styles.safeArea} testID={testID}>
-    <StatusBar barStyle={barStyle} backgroundColor={COLORS.background} />
+    <StatusBar
+      barStyle="dark-content"
+      backgroundColor={COLORS.background}
+      translucent={false}
+    />
 
     <KeyboardAvoidingView
       style={styles.flex}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
-import { Styles } from './styles';
+import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 
 const CITIES = [
@@ -15,7 +15,6 @@ const CITIES = [
 
 const ChooseCity = ({ navigation }) => {
   const [selectedCity, setSelectedCity] = useState(null);
-  const styles = Styles();
   const handleContinue = () => {
     // if (!selectedCity) return;
     navigation.navigate('Emotions');

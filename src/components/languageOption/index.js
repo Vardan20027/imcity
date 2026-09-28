@@ -1,10 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import { Styles } from './styles';
+import styles from './styles';
 import MIcon from "../svgs";
 import {ICON_NAMES} from "../svgs/icon_names";
 
-const styles = Styles();
 
 const LanguageOption = ({ label, selected, onPress, isLast = false }) => (
   <TouchableOpacity

@@ -3,12 +3,11 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
-import { Styles } from './styles';
+import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 
 const CODE_LENGTH = 4;
 const RESEND_COUNTDOWN = 59;
-const styles = Styles();
 
 const OTPInput = ({ value, isFocused, onPress }) => (
   <TouchableOpacity

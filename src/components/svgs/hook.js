@@ -15,10 +15,20 @@ import CalendarIcon from './calendar';
 import SearchIcon from "./search";
 import PlusIcon from "./plus";
 import ArrowDown from "./arrows/down";
+import NotificationIcon from './notification';
+import TabHomeIcon from './tabbar/home';
+import TabServicesIcon from './tabbar/services';
+import TabCenterIcon from './tabbar/center';
+import TabHeartIcon from './tabbar/heart';
+import TabProfileIcon from './tabbar/profile';
+import AppLogo from './logo/appLogo';
 
 export const ICONS = {
   [ICON_NAMES.WHITE_LOGO]: ({ width, height, color }) => (
     <WhiteLogo width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.APP_LOGO]: ({ width, height, color }) => (
+    <AppLogo width={width} height={height} color={color} />
   ),
   [ICON_NAMES.SOCIAL.GOOGLE]: ({ width, height, color }) => (
     <GoogleIcon width={width} height={height} color={color} />
@@ -28,6 +38,24 @@ export const ICONS = {
   ),
   [ICON_NAMES.ARROWS.DOWN]: ({ width, height, color }) => (
     <ArrowDown width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.NOTIFICATION]: ({ width, height, color }) => (
+    <NotificationIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.TAB.HOME]: ({ width, height, color }) => (
+    <TabHomeIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.TAB.SERVICES]: ({ width, height, color }) => (
+    <TabServicesIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.TAB.CENTER]: ({ width, height, color }) => (
+    <TabCenterIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.TAB.HEART]: ({ width, height, color }) => (
+    <TabHeartIcon width={width} height={height} color={color} />
+  ),
+  [ICON_NAMES.TAB.PROFILE]: ({ width, height, color }) => (
+    <TabProfileIcon width={width} height={height} color={color} />
   ),
   [ICON_NAMES.EMOTIONS.CALM]: ({ width, height, color }) => (
     <CalmIcon width={width} height={height} color={color} />

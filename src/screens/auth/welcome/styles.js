@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { COLORS } from '../../../assets/rootStyles';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
 
     titleSection: {
       alignItems: 'center',
@@ -63,6 +62,5 @@ const Styles = theme => {
       fontWeight: '600',
     },
   });
-};
 
-export { Styles };
+export default styles;

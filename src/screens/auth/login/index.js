@@ -3,11 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import Button from '../../../components/button';
 import { COLORS } from '../../../assets/rootStyles';
 import MIcon from '../../../components/svgs';
-import { Styles } from './styles';
+import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 import AuthLayout from '../../../components/layout/AuthLayout';
+import { useContainer } from './hook';
 
-const styles = Styles();
 
 const ARMENIA_DIAL_CODE = '+374';
 const ARMENIA_PHONE_LENGTH = 8; // still unverified against a real spec — flagged before, still true
@@ -21,6 +21,9 @@ const Divider = () => (
 );
 
 const LoginScreen = ({ navigation }) => {
+  const { handleLoginAction } = useContainer();
+  const [email, setEmail] = useState('vardan.avetisyann.454@gmail.com');
+  const [password, setPassword] = useState('12345612');
   const [phone, setPhone] = useState('');
 
   const handleContinue = () => {
@@ -30,33 +33,41 @@ const LoginScreen = ({ navigation }) => {
   return (
     <AuthLayout showLogo={false}>
       <View>
-        <OnboardingHeader currentStep={1} totalSteps={5} onBack={() => navigation.goBack()} />
+        <OnboardingHeader
+          currentStep={1}
+          totalSteps={5}
+          onBack={() => navigation.goBack()}
+        />
 
-          <Text style={styles.title}>Մուտք</Text>
+        <Text style={styles.title}>Մուտք</Text>
 
-          <View style={styles.phoneRow}>
-            <View style={styles.codePrefix}>
-              <Image source={require('../../../assets/flags/am.png')} style={styles.flag} />
-              <Text style={styles.dialCode}>{ARMENIA_DIAL_CODE}</Text>
-            </View>
-            <View style={styles.separator} />
-            <TextInput
-              style={styles.input}
-              placeholder="Հեռախոսահամար"
-              placeholderTextColor={COLORS.textSecondary}
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-              maxLength={ARMENIA_PHONE_LENGTH}
-              returnKeyType="done"
+        <View style={styles.phoneRow}>
+          <View style={styles.codePrefix}>
+            <Image
+              source={require('../../../assets/flags/am.png')}
+              style={styles.flag}
             />
+            <Text style={styles.dialCode}>{ARMENIA_DIAL_CODE}</Text>
           </View>
-
-          <Button
-            label="Շարունակել"
-            onPress={handleContinue}
-            disabled={phone.length !== ARMENIA_PHONE_LENGTH}
+          <View style={styles.separator} />
+          <TextInput
+            style={styles.input}
+            placeholder="Հեռախոսահամար"
+            placeholderTextColor={COLORS.textSecondary}
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+            maxLength={ARMENIA_PHONE_LENGTH}
+            returnKeyType="done"
           />
+        </View>
+
+        <Button
+          label="Շարունակել"
+          onPress={() => handleLoginAction({ email, password })}
+          // onPress={handleContinue}
+          disabled={phone.length !== ARMENIA_PHONE_LENGTH}
+        />
       </View>
 
       <View>

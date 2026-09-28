@@ -1,6 +1,6 @@
 import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { ICONS } from './hook';
-import { TouchableOpacity } from 'react-native';
 
 const MIcon = ({
   name,
@@ -14,16 +14,41 @@ const MIcon = ({
   activeOpacity,
   style,
 }) => {
+  const Icon = ICONS?.[name];
+  if (!Icon) {
+    return null;
+  }
+
+  const node = (
+    <Icon
+      size={size}
+      width={width}
+      height={height}
+      color={color}
+      backgroundColor={backgroundColor}
+    />
+  );
+
+  if (!onPress) {
+    if (!style) {
+      return node;
+    }
+    return (
+      <View style={style} pointerEvents="none">
+        {node}
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity
-      disabled={!onPress}
       onPress={onPress}
-      activeOpacity={activeOpacity}
+      disabled={disabled}
+      activeOpacity={activeOpacity ?? 0.7}
+      delayPressIn={0}
       style={style}
     >
-      {ICONS?.[name]
-        ? ICONS?.[name]({ size, width, height, color, backgroundColor })
-        : null}
+      {node}
     </TouchableOpacity>
   );
 };

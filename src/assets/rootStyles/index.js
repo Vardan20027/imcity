@@ -95,6 +95,15 @@ export const COLORS = {
     800: '#8b2527',
     900: '#6a1d1e',
   },
+  overlay: '#00000099', // play / volume / badge circles
+  glass: '#FFFFFF66', // date + countdown pills over media
+  mediaPlaceholder: '#3C3C3C',
+  tabInactive: '#616161',
+  orangeBg: '#FF870026',
+  pink: '#F4466E',
+  pinkBg: '#F4466E26',
+  purpleBg: '#DA61FF26',
+  gold: '#FFC201',
   primary: '#FF8700',
   primaryLight: '#EFF6FF',
   primaryGray: '#979797',

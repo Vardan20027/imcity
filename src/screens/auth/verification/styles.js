@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { COLORS } from '../../../assets/rootStyles';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     hiddenInput: {
       position: 'absolute',
       width: 0,
@@ -72,6 +71,5 @@ const Styles = theme => {
       marginTop: 'auto',
     },
   });
-};
 
-export { Styles };
+export default styles;

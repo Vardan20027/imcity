@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { normalize } from '../../assets/deviceInfo/normalize';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       paddingVertical: normalize(16),
       backgroundColor: '#FFFFFF',
@@ -27,6 +26,5 @@ const Styles = theme => {
       fontSize: 16,
     },
   });
-}
 
-export {Styles};
+export default styles;

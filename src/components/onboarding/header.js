@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text} from 'react-native';
-import { Styles } from './styles';
+import styles from './styles';
 import MIcon from '../svgs';
 import { ICON_NAMES } from '../svgs/icon_names';
 
 const OnboardingHeader = ({ currentStep, totalSteps = 5, onBack }) => {
-  const styles = Styles();
 
   return (
     <View style={styles.container}>

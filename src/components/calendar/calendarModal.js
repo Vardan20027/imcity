@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Styles } from './styles';
+import styles from './styles';
 import MIcon from "../svgs";
 import {ICON_NAMES} from "../svgs/icon_names";
 const MONTHS = [
@@ -20,7 +20,6 @@ const MONTHS = [
 const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
-  const styles = Styles();
   const base = initialDate || new Date();
 
   const [viewMonth, setViewMonth] = useState(base.getMonth());
@@ -75,7 +74,10 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
     setSelectedDate(new Date(viewYear, viewMonth, cell.day));
   };
 
-  const handleClear = () => setSelectedDate(null);
+  const handleClear = () => {
+    setSelectedDate(null);
+    onClose();
+  };
 
   const handleConfirm = () => {
     if (selectedDate) onConfirm(selectedDate);

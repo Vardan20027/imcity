@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
-import { Styles } from './styles';
+import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 import { COLORS } from '../../../assets/rootStyles';
 import MIcon from '../../../components/svgs';
@@ -22,7 +22,6 @@ const InformationScreen = ({ navigation }) => {
     { id: 'f', label: 'Իգական', value: 'female' },
     { id: 'o', label: 'Չնշել', value: 'other' },
   ];
-  const styles = Styles();
   const handleContinue = () => {
     navigation.navigate('AddFriend');
   };

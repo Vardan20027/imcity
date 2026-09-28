@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { COLORS } from '../../../assets/rootStyles';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       flex: 1,
       marginBottom: normalize(10),
@@ -54,6 +53,5 @@ const Styles = theme => {
       fontWeight: '500',
     },
   });
-}
 
-export {Styles};
+export default styles;

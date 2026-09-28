@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/rootStyles';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     button: {
       backgroundColor: COLORS.primary,
       borderRadius: 10,
@@ -21,6 +20,5 @@ const Styles = theme => {
       color: COLORS.buttonDisabledText,
     },
   });
-};
 
-export { Styles };
+export default styles;

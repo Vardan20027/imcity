@@ -2,66 +2,14 @@ import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
-import { Styles } from './styles';
-import { ICON_NAMES } from '../../../components/svgs/icon_names';
+import styles from './styles';
 import MIcon from '../../../components/svgs';
 import OnboardingHeader from '../../../components/onboarding/header';
+import { EMOTIONS } from '../../../constants/emotions/data';
 
-const styles = Styles();
 
 const EmotionsScreen = ({ navigation }) => {
   const [selectedIds, setSelectedIds] = useState([]);
-  const data = [
-    {
-      id: 1,
-      icon: ICON_NAMES.EMOTIONS.CALM,
-      color: '#6EAA4E',
-      backgroundColor: '#E2F1DA',
-      title: 'Հանգստություն',
-    },
-    {
-      id: 2,
-      icon: ICON_NAMES.EMOTIONS.DRIVE,
-      color: '#FF8700',
-      backgroundColor: '#FFE9E5',
-      title: 'Էներգիա',
-    },
-    {
-      id: 3,
-      icon: ICON_NAMES.EMOTIONS.ROMANCE,
-      color: '#F4466E',
-      backgroundColor: '#F7EEEE',
-      title: 'Ռոմանտիկա',
-    },
-    {
-      id: 4,
-      icon: ICON_NAMES.EMOTIONS.FUN,
-      color: '#FFCC00',
-      backgroundColor: '#F9F5E4',
-      title: 'Զվարճանք',
-    },
-    {
-      id: 5,
-      icon: ICON_NAMES.EMOTIONS.DISCOVERY,
-      color: '#DA61FF',
-      backgroundColor: '#F3E8FF',
-      title: 'Բացահայտում',
-    },
-    {
-      id: 6,
-      icon: ICON_NAMES.EMOTIONS.WORKING,
-      color: '#46A3F4',
-      backgroundColor: '#E2F2FF',
-      title: 'Արդյունավե-\nտություն',
-    },
-    {
-      id: 7,
-      icon: ICON_NAMES.EMOTIONS.INSPIRATION,
-      color: '#46A3F4',
-      backgroundColor: '#E2F2FF',
-      title: 'Ոգեշնչում',
-    },
-  ];
   const MAX = 3;
 
   const handleContinue = () => {
@@ -92,7 +40,7 @@ const EmotionsScreen = ({ navigation }) => {
       <Text style={styles.subtitle}>Մինչև 3 տարբերակ</Text>
 
       <View style={styles.container}>
-        {data.map((item, index) => {
+        {EMOTIONS.map((item, index) => {
           const isSelected = selectedIds.includes(item.id);
           return (
             <TouchableOpacity

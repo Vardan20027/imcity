@@ -12,7 +12,14 @@ import AddFriend from '../screens/auth/addFriend';
 const Stack = createNativeStackNavigator();
 
 const AuthNavigator = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false,
+      statusBarStyle: 'dark',
+      statusBarBackgroundColor: '#FFFFFF',
+      navigationBarColor: '#FFFFFF',
+    }}
+  >
     <Stack.Screen name="LanguageSelect" component={LanguageSelectScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Verification" component={VerificationScreen} />

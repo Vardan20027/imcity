@@ -4,11 +4,10 @@ import LANGUAGES from '../../../constants/languages';
 import Button from '../../../components/button';
 import LanguageOption from '../../../components/languageOption';
 import AuthLayout from '../../../components/layout/AuthLayout';
-import { Styles } from './styles';
+import styles from './styles';
 
 const LanguageSelectScreen = ({ navigation }) => {
   const [selectedId, setSelectedId] = useState(LANGUAGES[0]?.id ?? null);
-  const styles = Styles();
 
   const handleContinue = () => {
     navigation.navigate('Login');

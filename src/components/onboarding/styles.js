@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { normalize} from "../../assets/deviceInfo/normalize";
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       paddingBottom: normalize(32),
     },
@@ -39,6 +38,5 @@ const Styles = theme => {
       marginRight: normalize(6),
     },
   });
-}
 
-export { Styles };
+export default styles;

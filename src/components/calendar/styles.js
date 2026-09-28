@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/rootStyles';
 import { normalize } from '../../assets/deviceInfo/normalize';
 
-const Styles = theme => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     overlay: {
       flex: 1,
       justifyContent: 'flex-end',
@@ -118,7 +117,5 @@ const Styles = theme => {
       opacity: 0.4,
     },
   });
-};
 
-
-  export { Styles };
+export default styles;

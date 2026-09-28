@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { Styles } from './styles';
+import styles from './styles';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import SearchBar from '../../../components/searchBar';
 import { FRIENDS } from './data';
@@ -15,7 +15,6 @@ const AddFriend = ({navigation}) => {
   const handleContinue = () => {
 
   };
-  const styles = Styles();
   return (
     <AuthLayout showLogo={false}>
       <View style={styles.container}>
