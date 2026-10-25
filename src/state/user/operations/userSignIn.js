@@ -7,11 +7,11 @@ export const userSignIn = createAsyncThunk(
   async (payload, { getState }) => {
     try {
       const { url } = signInEndpoint;
-      console.log(url, "URLLLLL");
+      console.log(url, 'URLLLLL');
       const response = await httpClient.post(url, payload);
 
       console.log(response, 'response');
-      // return data;
+      return response.data;
     } catch (err) {
       console.log(err.message, 'ERROR');
     }

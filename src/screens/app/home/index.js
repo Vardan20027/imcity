@@ -10,6 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
@@ -20,6 +21,7 @@ import {
   FavoriteIcon,
   FireIcon,
   HeartFillIcon,
+  InviteIcon,
   JoinIcon,
   LandmarkIcon,
   LeafIcon,
@@ -53,11 +55,65 @@ const chipIconSize = icon => {
   };
 };
 
+const hexToRgba = (hex, alpha) => {
+  const n = hex.replace('#', '');
+  return `rgba(${parseInt(n.slice(0, 2), 16)},${parseInt(n.slice(2, 4), 16)},${parseInt(
+    n.slice(4, 6),
+    16,
+  )},${alpha})`;
+};
+
 const CHIPS = EMOTIONS.map(c => ({
   ...c,
-  label: c.title.replace('-\n', '').replace('\n', ''),
+  label: c.title,
+  selectedBg: hexToRgba(c.color, 0.15),
   iconSize: chipIconSize(c.icon),
 }));
+
+const LIKE_POS = {
+  event: { top: normalize(35), right: normalize(40) },
+  business: { top: normalize(32), right: normalize(32) },
+  memory: { top: normalize(33), right: normalize(40) },
+  attraction: { top: normalize(33), right: normalize(35) },
+};
+
+const VOLUME_POS = {
+  event: { left: normalize(18), bottom: normalize(16) },
+  business: { left: normalize(18), bottom: normalize(16) },
+  memory: { left: normalize(16), bottom: normalize(14) },
+  attraction: { left: normalize(16), bottom: normalize(14) },
+};
+
+const REACTIONS_BOX = {
+  event: {
+    position: 'absolute',
+    right: normalize(16),
+    bottom: normalize(16),
+    width: normalize(95),
+    height: normalize(87),
+  },
+  business: {
+    position: 'absolute',
+    right: normalize(16),
+    bottom: normalize(16),
+    width: normalize(98),
+    height: normalize(107),
+  },
+  memory: {
+    position: 'absolute',
+    right: normalize(16),
+    bottom: normalize(24),
+    width: normalize(98),
+    height: normalize(107),
+  },
+  attraction: {
+    position: 'absolute',
+    right: normalize(16),
+    bottom: normalize(24),
+    width: normalize(98),
+    height: normalize(102),
+  },
+};
 
 const HIT_SLOP = { top: 10, bottom: 10, left: 10, right: 10 };
 
@@ -268,7 +324,7 @@ const EmotionChip = memo(({ chip, selected, onToggle }) => (
     unstable_pressDelay={0}
     style={({ pressed }) => [
       styles.chip,
-      selected ? { backgroundColor: chip.backgroundColor } : styles.chipIdle,
+      selected ? { backgroundColor: chip.selectedBg } : styles.chipIdle,
       pressed && styles.chipPressed,
     ]}
   >
@@ -362,7 +418,7 @@ function MediaOverlays({ item, showPills }) {
       ) : null}
 
       <TouchableOpacity
-        style={styles.likeBtn}
+        style={[styles.likeBtn, LIKE_POS[item.type]]}
         activeOpacity={0.8}
         delayPressIn={0}
         onPress={() => setLiked(v => !v)}
@@ -381,43 +437,104 @@ function MediaOverlays({ item, showPills }) {
         </TouchableOpacity>
       ) : null}
 
-      <TouchableOpacity style={styles.volumeBtn} activeOpacity={0.8} delayPressIn={0}>
+      <TouchableOpacity
+        style={[styles.volumeBtn, VOLUME_POS[item.type]]}
+        activeOpacity={0.8}
+        delayPressIn={0}
+      >
         <VolumeIcon />
       </TouchableOpacity>
 
-      <Reactions reactors={item.reactors} />
+      <View style={REACTIONS_BOX[item.type]} pointerEvents="none">
+        <Reactions reactors={item.reactors} />
+      </View>
     </>
+  );
+}
+
+const CountChip = ({ variant, label, count }) => {
+  const isJoin = variant === 'join';
+  return (
+    <View
+      style={[
+        styles.countChip,
+        isJoin ? styles.countChipJoin : styles.countChipEmotion,
+      ]}
+    >
+      <View style={styles.countChipInner}>
+        <View style={styles.countChipLeft}>
+          {isJoin ? (
+            <JoinIcon dark />
+          ) : (
+            <LeafIcon width={normalize(16)} height={normalize(16)} />
+          )}
+          <Text
+            style={[
+              styles.countChipLabel,
+              !isJoin && styles.countChipLabelEmotion,
+            ]}
+          >
+            {label}
+          </Text>
+          <View style={styles.countChipDivider} />
+        </View>
+        <Text
+          style={[
+            styles.countChipValue,
+            !isJoin && styles.countChipValueEmotion,
+          ]}
+        >
+          {count}
+        </Text>
+      </View>
+    </View>
   );
 };
 
-const CountChip = ({ label, count }) => (
-  <View style={styles.countChip}>
-    <View style={styles.countChipInner}>
-      <View style={styles.countChipLeft}>
-        <JoinIcon dark />
-        <Text style={styles.countChipLabel}>{label}</Text>
-        <View style={styles.countChipDivider} />
+const ActionsRow = ({ item }) => {
+  const isEvent = item.type === 'event';
+  return (
+    <View style={styles.actionsRow}>
+      <View style={styles.emotionIcons}>
+        <LeafIcon />
+        <FireIcon />
+        <HeartFillIcon />
       </View>
-      <Text style={styles.countChipValue}>{count}</Text>
+      <View
+        style={[styles.actionsRight, !isEvent && styles.actionsRightShare]}
+      >
+        {isEvent ? (
+          <>
+            <PeopleIcon />
+            <InviteIcon />
+          </>
+        ) : (
+          <ShareIcon />
+        )}
+        <CountChip
+          variant={isEvent ? 'join' : 'emotion'}
+          label={item.actionLabel}
+          count={item.count}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
-const ActionsRow = ({ item }) => (
-  <View style={styles.actionsRow}>
-    <View style={styles.emotionIcons}>
-      <LeafIcon />
-      <FireIcon />
-      <HeartFillIcon />
-    </View>
-    <View style={styles.actionsRight}>
-      {item.showShare ? <ShareIcon /> : <PeopleIcon />}
-      <CountChip label={item.actionLabel} count={item.count} />
-    </View>
-  </View>
-);
+const PostCard = memo(({ item }) => {
+  const navigation = useNavigation();
+  const openPoster = () => {
+    navigation.navigate(ROUT_NAMES.BUSINESS, {
+      name: item.author === 'Armenia hotel' ? 'Արմենիա հյուրանոց' : item.author,
+      handle: `@${String(item.author).toLowerCase()}`,
+      logo: item.logo,
+      description: item.description,
+      location: item.location,
+      initialTab: item.type === 'event' ? 'event' : 'gallery',
+    });
+  };
 
-const PostCard = memo(({ item }) => (
+  return (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
       <View style={styles.authorRow}>
@@ -426,7 +543,13 @@ const PostCard = memo(({ item }) => (
             <LandmarkIcon />
           </View>
         ) : (
-          <Image source={item.logo} style={styles.authorAvatar} />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            delayPressIn={0}
+            onPress={openPoster}
+          >
+            <Image source={item.logo} style={styles.authorAvatar} />
+          </TouchableOpacity>
         )}
         <Text style={styles.authorName}>{item.author}</Text>
       </View>
@@ -464,6 +587,8 @@ const PostCard = memo(({ item }) => (
           style={[
             styles.description,
             item.type === 'memory' && styles.descriptionMuted,
+            item.type === 'attraction' && styles.descriptionTight,
+            item.type === 'business' && styles.descriptionTight,
           ]}
         >
           {item.description}
@@ -489,7 +614,8 @@ const PostCard = memo(({ item }) => (
       ) : null}
     </View>
   </View>
-));
+  );
+});
 
 const PostSeparator = () => <View style={styles.postSeparator} />;
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Appearance, StatusBar } from 'react-native';
+import { Appearance, Platform, StatusBar } from 'react-native';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './src/navigation/RootNavigator';
@@ -13,28 +13,28 @@ const navigationTheme = {
 };
 
 const App = () => {
+  const onNavigationReady = () => {
+    RNBootSplash.hide({ fade: true });
+  };
+
   useEffect(() => {
     Appearance.setColorScheme('light');
-    StatusBar.setBarStyle('dark-content', true);
-    if (StatusBar.setBackgroundColor) {
+    if (Platform.OS === 'android') {
+      StatusBar.setBarStyle('dark-content', true);
       StatusBar.setBackgroundColor('#FFFFFF', true);
     }
-    const prepare = async () => {
-      await Promise.all([new Promise(r => setTimeout(r, 800))]);
-
-      await RNBootSplash.hide({ fade: true });
-    };
-
-    prepare();
   }, []);
+
   return (
     <SafeAreaProvider>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#FFFFFF"
-        translucent={false}
-      />
-      <NavigationContainer theme={navigationTheme}>
+      {Platform.OS === 'android' ? (
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="#FFFFFF"
+          translucent={false}
+        />
+      ) : null}
+      <NavigationContainer theme={navigationTheme} onReady={onNavigationReady}>
         <RootNavigator />
       </NavigationContainer>
     </SafeAreaProvider>

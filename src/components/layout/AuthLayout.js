@@ -1,16 +1,15 @@
 import React from 'react';
 import {
   View,
-  StatusBar,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Image,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import { COLORS } from '../../assets/rootStyles';
-
 
 const AuthLayout = ({
   children,
@@ -20,11 +19,13 @@ const AuthLayout = ({
   testID = 'auth-layout',
 }) => (
   <SafeAreaView style={styles.safeArea} testID={testID}>
-    <StatusBar
-      barStyle="dark-content"
-      backgroundColor={COLORS.background}
-      translucent={false}
-    />
+    {Platform.OS === 'android' ? (
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={COLORS.background}
+        translucent={false}
+      />
+    ) : null}
 
     <KeyboardAvoidingView
       style={styles.flex}

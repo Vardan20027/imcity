@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '../screens/app/home';
 import ProfileScreen from '../screens/app/profile';
 import NotificationsScreen from '../screens/app/notifications';
+import BusinessScreen from '../screens/app/business';
+import ServicesNavigator from '../screens/app/services';
 import TabHomeIcon from '../components/svgs/tabbar/home';
 import TabServicesIcon from '../components/svgs/tabbar/services';
 import TabCenterIcon from '../components/svgs/tabbar/center';
@@ -108,7 +110,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Services"
-        component={Placeholder}
+        component={ServicesNavigator}
         options={{
           tabBarIcon: ({ focused }) => tabIcon(TabServicesIcon, focused, 24),
         }}
@@ -157,6 +159,7 @@ const AppNavigator = () => (
       name={ROUT_NAMES.NOTIFICATIONS}
       component={NotificationsScreen}
     />
+    <Stack.Screen name={ROUT_NAMES.BUSINESS} component={BusinessScreen} />
   </Stack.Navigator>
 );
 

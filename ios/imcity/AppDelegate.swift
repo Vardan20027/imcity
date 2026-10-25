@@ -29,11 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       in: window,
       launchOptions: launchOptions
     )
-    DispatchQueue.main.async {
-          if let rootView = self.window?.rootViewController?.view {
-            RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
-          }
-        }
     return true
   }
 }
@@ -49,5 +44,10 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
+  }
+
+  override func customize(_ rootView: RCTRootView) {
+    super.customize(rootView)
+    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
   }
 }

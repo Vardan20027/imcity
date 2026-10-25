@@ -19,13 +19,14 @@ const styles = StyleSheet.create({
     otpRow: {
       flexDirection: 'row',
       justifyContent: 'center',
-      gap: normalize(16),
+      gap: normalize(8),
       marginBottom: normalize(24),
     },
     otpCircle: {
-      width: normalize(52),
-      height: normalize(52),
-      borderRadius: normalize(16),
+      flex: 1,
+      maxWidth: normalize(48),
+      aspectRatio: 1,
+      borderRadius: normalize(14),
       borderWidth: 1.5,
       borderColor: COLORS.border,
       alignItems: 'center',

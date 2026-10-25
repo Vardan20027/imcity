@@ -98,8 +98,9 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      height: normalize(43),
+      minHeight: normalize(43),
       paddingHorizontal: normalize(12),
+      paddingVertical: normalize(8),
       borderRadius: normalize(20),
       gap: normalize(8),
     },
@@ -114,7 +115,9 @@ const styles = StyleSheet.create({
     chipLabel: {
       fontFamily: Fonts.arm.semi_bold,
       fontSize: normalize(12),
+      lineHeight: normalize(14),
       letterSpacing: 0.36,
+      textAlign: 'center',
     },
     chipLabelIdle: {
       color: '#7B7B7B',
@@ -205,8 +208,6 @@ const styles = StyleSheet.create({
 
     likeBtn: {
       position: 'absolute',
-      top: normalize(35),
-      right: normalize(40),
       width: normalize(24),
       height: normalize(24),
       alignItems: 'center',
@@ -223,15 +224,10 @@ const styles = StyleSheet.create({
     },
     volumeBtn: {
       position: 'absolute',
-      left: normalize(16),
-      bottom: normalize(14),
     },
     reactions: {
-      position: 'absolute',
-      right: normalize(16),
-      bottom: normalize(16),
-      width: normalize(95),
-      height: normalize(87),
+      width: '100%',
+      height: '100%',
     },
     reactorWrap: {
       position: 'absolute',
@@ -274,7 +270,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      height: normalize(39),
+      minHeight: normalize(38),
     },
     emotionIcons: {
       flexDirection: 'row',
@@ -286,15 +282,26 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       gap: normalize(12),
     },
+    actionsRightShare: {
+      gap: normalize(16),
+    },
     countChip: {
       flexDirection: 'row',
       alignItems: 'center',
-      height: normalize(39),
+      height: normalize(40),
       width: normalize(134),
-      paddingHorizontal: normalize(8),
       borderWidth: 1,
       borderColor: '#171717',
       borderRadius: normalize(20),
+    },
+    countChipJoin: {
+      paddingHorizontal: normalize(8),
+      paddingVertical: normalize(8),
+    },
+    countChipEmotion: {
+      paddingHorizontal: normalize(12),
+      paddingVertical: normalize(8),
+      height: normalize(38),
     },
     countChipInner: {
       flex: 1,
@@ -313,6 +320,10 @@ const styles = StyleSheet.create({
       letterSpacing: 0.3,
       color: '#171717',
     },
+    countChipLabelEmotion: {
+      fontSize: normalize(12),
+      letterSpacing: 0.36,
+    },
     countChipDivider: {
       width: 1,
       height: normalize(12),
@@ -323,6 +334,9 @@ const styles = StyleSheet.create({
       fontSize: normalize(10),
       lineHeight: normalize(22),
       color: '#171717',
+    },
+    countChipValueEmotion: {
+      fontSize: normalize(12),
     },
 
     cardBody: {
@@ -335,6 +349,9 @@ const styles = StyleSheet.create({
       fontSize: normalize(14),
       lineHeight: normalize(22),
       color: COLORS.black[50],
+    },
+    descriptionTight: {
+      lineHeight: normalize(18),
     },
     descriptionMuted: {
       color: '#545454',

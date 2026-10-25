@@ -7,15 +7,27 @@ import {
 const navigationRef = createNavigationContainerRef();
 
 function navigate(name, params) {
-  navigationRef?.dispatch(CommonActions.navigate(name, params));
+  // Check if the navigator is mounted and ready
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(CommonActions.navigate(name, params));
+  } else {
+    // Optional: Queue the navigation or log a helpful message during splash screen
+    console.warn(
+      `Navigation deferred: Tried to navigate to ${name} before ready.`,
+    );
+  }
 }
 
 function back() {
-  navigationRef?.goBack();
+  if (navigationRef.isReady()) {
+    navigationRef.goBack();
+  }
 }
 
 function replace(name, params) {
-  navigationRef?.dispatch(StackActions.replace(name, params));
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(StackActions.replace(name, params));
+  }
 }
 
 export { navigationRef, navigate, back, replace };

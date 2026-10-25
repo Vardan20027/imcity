@@ -6,7 +6,7 @@ import Button from '../../../components/button';
 import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 
-const CODE_LENGTH = 4;
+const CODE_LENGTH = 6;
 const RESEND_COUNTDOWN = 59;
 
 const OTPInput = ({ value, isFocused, onPress }) => (
@@ -21,11 +21,17 @@ const OTPInput = ({ value, isFocused, onPress }) => (
 );
 
 const VerificationScreen = ({ navigation, route }) => {
-  const { phone } = route.params ?? {};
+  const token = route?.params?.token;
   const [code, setCode] = useState('');
   const [countdown, setCountdown] = useState(RESEND_COUNTDOWN);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (token) {
+      console.log('Received token:', token);
+    }
+  }, [token]);
 
   useEffect(() => {
     if (countdown === 0) return;
@@ -48,7 +54,6 @@ const VerificationScreen = ({ navigation, route }) => {
   };
 
   const handleContinue = () => {
-    // if (code.length < CODE_LENGTH) return;
     navigation.navigate('ChooseCity');
   };
 
@@ -61,7 +66,7 @@ const VerificationScreen = ({ navigation, route }) => {
         totalSteps={5}
         onBack={() => navigation.goBack()}
       />
-      {/* Hidden real input — captures keyboard */}
+
       <TextInput
         ref={inputRef}
         value={code}

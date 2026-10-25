@@ -1,0 +1,452 @@
+import { StyleSheet } from 'react-native';
+import { normalize } from '../../../assets/deviceInfo/normalize';
+import { COLORS, Fonts } from '../../../assets/rootStyles';
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  scroll: {
+    paddingBottom: normalize(24),
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: normalize(16),
+    height: normalize(34),
+  },
+  citySelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(4),
+  },
+  cityName: {
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(16),
+    lineHeight: normalize(22),
+    letterSpacing: 0.48,
+    color: COLORS.black[50],
+  },
+  cityMenuBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 20,
+  },
+  cityMenu: {
+    position: 'absolute',
+    top: normalize(50),
+    left: normalize(16),
+    minWidth: normalize(145),
+    paddingVertical: normalize(11),
+    backgroundColor: COLORS.white,
+    borderRadius: normalize(12),
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+    zIndex: 21,
+  },
+  cityOption: {
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(7),
+  },
+  cityOptionSelected: {
+    backgroundColor: '#FAFAFA',
+  },
+  cityOptionText: {
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(16),
+    lineHeight: normalize(26),
+    color: COLORS.black[50],
+  },
+
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: normalize(44),
+    marginHorizontal: normalize(16),
+    marginTop: normalize(14),
+    paddingHorizontal: normalize(12),
+    borderWidth: 1,
+    borderColor: '#DCDCDC',
+    borderRadius: normalize(16),
+    backgroundColor: '#FAFAFA',
+    gap: normalize(10),
+  },
+  searchSpaced: {
+    marginTop: normalize(32),
+  },
+  searchInput: {
+    flex: 1,
+    padding: 0,
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(16),
+    color: COLORS.black[50],
+  },
+
+  hubBody: {
+    paddingHorizontal: normalize(8),
+    paddingTop: normalize(24),
+    gap: normalize(32),
+  },
+  featured: {
+    height: normalize(87),
+    borderRadius: normalize(30),
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    backgroundColor: COLORS.white,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: normalize(18),
+    paddingBottom: normalize(16),
+    gap: normalize(24),
+  },
+  featuredIcon: {
+    width: normalize(60),
+    height: normalize(55),
+    borderRadius: normalize(10),
+    backgroundColor: 'rgba(255,135,0,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featuredText: {
+    flex: 1,
+    gap: normalize(8),
+  },
+  featuredTitle: {
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(16),
+    lineHeight: normalize(22),
+    color: COLORS.black[50],
+  },
+  featuredCount: {
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(10),
+    lineHeight: normalize(22),
+    color: '#3C3C3C',
+  },
+
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: normalize(16),
+  },
+  categoryCard: {
+    width: '48.5%',
+    height: normalize(70),
+    borderRadius: normalize(20),
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+    backgroundColor: COLORS.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: normalize(8),
+    gap: normalize(8),
+  },
+  categoryIcon: {
+    width: normalize(36),
+    height: normalize(40),
+    borderRadius: normalize(10),
+    backgroundColor: 'rgba(255,135,0,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryBody: {
+    flex: 1,
+  },
+  categoryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(2),
+  },
+  categoryTitle: {
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(12),
+    lineHeight: normalize(16),
+    color: COLORS.black[50],
+    flexShrink: 1,
+  },
+  categoryCount: {
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(10),
+    lineHeight: normalize(22),
+    color: '#909090',
+  },
+  emotions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(2),
+  },
+
+  pageHeader: {
+    height: normalize(22),
+    marginHorizontal: normalize(16),
+    justifyContent: 'center',
+  },
+  pageBack: {
+    position: 'absolute',
+    left: 0,
+    zIndex: 1,
+  },
+  pageTitle: {
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(16),
+    lineHeight: normalize(22),
+    color: COLORS.black[50],
+    textAlign: 'center',
+  },
+  pageTitleBold: {
+    fontFamily: Fonts.arm.bold,
+    fontSize: normalize(14),
+  },
+
+  chipsContent: {
+    paddingHorizontal: normalize(16),
+    paddingTop: normalize(16),
+    paddingBottom: normalize(8),
+    gap: normalize(4),
+    alignItems: 'center',
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: normalize(43),
+    paddingHorizontal: normalize(12),
+    paddingVertical: normalize(8),
+    borderRadius: normalize(20),
+    gap: normalize(8),
+  },
+  chipIdle: {
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+    backgroundColor: COLORS.white,
+  },
+  chipPressed: {
+    opacity: 0.85,
+  },
+  chipLabel: {
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(12),
+    lineHeight: normalize(14),
+    letterSpacing: 0.36,
+    textAlign: 'center',
+  },
+  chipLabelIdle: {
+    color: '#7B7B7B',
+  },
+  chipIcon: {
+    width: normalize(16),
+    height: normalize(16),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  attractionList: {
+    paddingHorizontal: normalize(16),
+    paddingTop: normalize(16),
+    gap: normalize(24),
+  },
+  attractionImage: {
+    height: normalize(260),
+    borderRadius: normalize(10),
+    overflow: 'hidden',
+    backgroundColor: '#F3F3F3',
+  },
+  attractionImageFill: {
+    width: '100%',
+    height: '100%',
+  },
+  favorite: {
+    position: 'absolute',
+    top: normalize(16),
+    right: normalize(16),
+  },
+  actionRow: {
+    marginTop: normalize(12),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  actionRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(16),
+  },
+  emotionButton: {
+    height: normalize(38),
+    borderRadius: normalize(20),
+    borderWidth: 1,
+    borderColor: '#171717',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: normalize(12),
+    gap: normalize(4),
+  },
+  emotionButtonCompact: {
+    minWidth: normalize(81),
+    paddingHorizontal: normalize(8),
+  },
+  emotionDivider: {
+    width: 1,
+    height: normalize(12),
+    backgroundColor: '#171717',
+  },
+  emotionLabel: {
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(12),
+    letterSpacing: 0.36,
+    color: '#171717',
+  },
+  emotionCount: {
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(12),
+    lineHeight: normalize(22),
+    color: '#171717',
+  },
+  placeTitle: {
+    marginTop: normalize(12),
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(16),
+    lineHeight: normalize(22),
+    letterSpacing: 0.48,
+    color: COLORS.black[50],
+  },
+  descRow: {
+    marginTop: normalize(8),
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  desc: {
+    flex: 1,
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(14),
+    lineHeight: normalize(22),
+    letterSpacing: 0.42,
+    color: COLORS.black[50],
+  },
+  more: {
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(10),
+    lineHeight: normalize(22),
+    color: '#979797',
+    marginLeft: normalize(8),
+  },
+  locationRow: {
+    marginTop: normalize(12),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(6),
+  },
+  locationText: {
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(14),
+    lineHeight: normalize(22),
+    color: 'rgba(0,0,0,0.6)',
+  },
+
+  memoryGrid: {
+    marginTop: normalize(24),
+    paddingHorizontal: normalize(16),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: normalize(12),
+  },
+  memoryCard: {
+    width: '31%',
+  },
+  memoryImage: {
+    width: '100%',
+    height: normalize(141),
+    borderRadius: normalize(10),
+    backgroundColor: '#F3F3F3',
+  },
+  memoryMeta: {
+    marginTop: normalize(8),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(4),
+  },
+  memoryAvatar: {
+    width: normalize(24),
+    height: normalize(24),
+    borderRadius: normalize(12),
+  },
+  memoryName: {
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(10),
+    letterSpacing: 0.3,
+    color: COLORS.black[50],
+  },
+
+  placeGrid: {
+    paddingHorizontal: normalize(12),
+    paddingTop: normalize(16),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: normalize(24),
+  },
+  placeCard: {
+    width: '48.5%',
+  },
+  placeImage: {
+    height: normalize(220),
+    borderRadius: normalize(10),
+    overflow: 'hidden',
+    backgroundColor: '#F3F3F3',
+  },
+  placeMeta: {
+    marginTop: normalize(8),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  placeAuthor: {
+    marginTop: normalize(8),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(8),
+  },
+  placeLogo: {
+    width: normalize(24),
+    height: normalize(24),
+    borderRadius: normalize(12),
+  },
+  placeName: {
+    flex: 1,
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(14),
+    lineHeight: normalize(22),
+    letterSpacing: 0.42,
+    color: COLORS.black[50],
+  },
+
+  list: {
+    paddingHorizontal: normalize(16),
+    paddingTop: normalize(16),
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(16),
+    paddingVertical: normalize(11),
+    marginBottom: normalize(16),
+  },
+  listLabel: {
+    flex: 1,
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(14),
+    lineHeight: normalize(22),
+    letterSpacing: 0.42,
+    color: COLORS.black[50],
+  },
+});
+
+export default styles;

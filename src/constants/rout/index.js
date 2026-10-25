@@ -12,4 +12,5 @@ export const ROUT_NAMES = {
   MENU: 'MenuScreen',
   FAVORITES: 'FavoritesScreen',
   PROFILE: 'ProfileScreen',
+  BUSINESS: 'BusinessScreen',
 };

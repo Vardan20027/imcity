@@ -23,12 +23,10 @@ const Divider = () => (
 const LoginScreen = ({ navigation }) => {
   const { handleLoginAction } = useContainer();
   const [email, setEmail] = useState('vardan.avetisyann.454@gmail.com');
-  const [password, setPassword] = useState('12345612');
+  const [password, setPassword] = useState('123456');
+  const [first_name, setFirstName] = useState('Vardan');
+  const [last_name, setLastName] = useState('Avetisyan');
   const [phone, setPhone] = useState('');
-
-  const handleContinue = () => {
-    navigation.navigate('Verification');
-  };
 
   return (
     <AuthLayout showLogo={false}>
@@ -64,8 +62,7 @@ const LoginScreen = ({ navigation }) => {
 
         <Button
           label="Շարունակել"
-          onPress={() => handleLoginAction({ email, password })}
-          // onPress={handleContinue}
+          onPress={() => handleLoginAction({ email, password})}
           disabled={phone.length !== ARMENIA_PHONE_LENGTH}
         />
       </View>

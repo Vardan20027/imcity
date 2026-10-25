@@ -21,10 +21,10 @@ const RootNavigator = () => (
     }}
   >
     {/*{isAuthenticated ? (*/}
-      <Stack.Screen name="App" component={AppNavigator} />
-     {/*) : (*/}
-     {/*  <Stack.Screen name="Auth" component={AuthNavigator} />*/}
-    {/* )}*/}
+    <Stack.Screen name="App" component={AppNavigator} />
+    {/*) : (*/}
+    {/*  <Stack.Screen name="Auth" component={AuthNavigator} />*/}
+    {/*)}*/}
   </Stack.Navigator>
 );
 
