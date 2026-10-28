@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -77,9 +77,12 @@ const tabBarBase = bottomPad => ({
   overflow: 'visible',
 });
 
+const HIDDEN_TAB_BAR = { display: 'none' };
+
 const Tabs = () => {
   const insets = useSafeAreaInsets();
   const bottomPad = Math.max(insets.bottom, normalize(12));
+  const barStyle = useMemo(() => tabBarBase(bottomPad), [bottomPad]);
 
   return (
     <Tab.Navigator
@@ -90,8 +93,8 @@ const Tabs = () => {
         tabBarButton: TabBarButton,
         tabBarActiveBackgroundColor: 'transparent',
         tabBarInactiveBackgroundColor: 'transparent',
-        animation: 'fade',
-        tabBarStyle: tabBarBase(bottomPad),
+        animation: 'none',
+        tabBarStyle: barStyle,
         tabBarItemStyle: {
           height: normalize(44),
           padding: 0,
@@ -141,7 +144,7 @@ const Tabs = () => {
           const focused = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
           return {
             tabBarIcon: ({ focused: active }) => tabIcon(TabProfileIcon, active, 24),
-            tabBarStyle: HIDE_TAB_ROUTES.has(focused) ? { display: 'none' } : tabBarBase(bottomPad),
+            tabBarStyle: HIDE_TAB_ROUTES.has(focused) ? HIDDEN_TAB_BAR : barStyle,
           };
         }}
       />

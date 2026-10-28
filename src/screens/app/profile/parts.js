@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   ScrollView,
   Switch,
   Modal,
-  KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -197,25 +197,47 @@ const sheetBottom = inset => ({
   paddingBottom: normalize(20) + inset,
 });
 
+const keyboardPad = height => (height > 0 ? { paddingBottom: height } : null);
+
 export const BottomSheet = ({ visible, onClose, children, style }) => {
   const insets = useSafeAreaInsets();
+  const [keyboard, setKeyboard] = useState(0);
+
+  useEffect(() => {
+    if (!visible) {
+      setKeyboard(0);
+      return undefined;
+    }
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const show = Keyboard.addListener(showEvent, event => {
+      setKeyboard(event.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener(hideEvent, () => setKeyboard(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, [visible]);
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <Modal
-      visible={visible}
+      visible
       transparent
       animationType="fade"
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <View style={[styles.overlay, keyboardPad(keyboard)]}>
         <Pressable style={styles.dim} onPress={onClose} />
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <View style={[styles.sheet, sheetBottom(insets.bottom), style]}>
-            <View style={styles.handle} />
-            {children}
-          </View>
-        </KeyboardAvoidingView>
+        <View style={[styles.sheet, sheetBottom(insets.bottom), style]}>
+          <View style={styles.handle} />
+          {children}
+        </View>
       </View>
     </Modal>
   );
@@ -228,42 +250,52 @@ export const SheetAction = ({ icon, label, danger, onPress }) => (
   </TouchableOpacity>
 );
 
-export const SuccessModal = ({ visible, title, message, onClose }) => (
-  <Modal
-    visible={visible}
-    transparent
-    animationType="fade"
-    statusBarTranslucent
-    onRequestClose={onClose}
-  >
-    <View style={styles.dialogWrap}>
-      <Pressable style={styles.dialogDim} onPress={onClose} />
-      <View style={styles.dialog}>
-        <TouchableOpacity style={styles.dialogClose} onPress={onClose}>
-          <CloseIcon />
-        </TouchableOpacity>
-        <CheckCircleIcon />
-        <Text style={styles.dialogTitle}>{title}</Text>
-        {message ? <Text style={styles.dialogBody}>{message}</Text> : null}
+export const SuccessModal = ({ visible, title, message, onClose }) => {
+  if (!visible) {
+    return null;
+  }
+  return (
+    <Modal
+      visible
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={styles.dialogWrap}>
+        <Pressable style={styles.dialogDim} onPress={onClose} />
+        <View style={styles.dialog}>
+          <TouchableOpacity style={styles.dialogClose} onPress={onClose}>
+            <CloseIcon />
+          </TouchableOpacity>
+          <CheckCircleIcon />
+          <Text style={styles.dialogTitle}>{title}</Text>
+          {message ? <Text style={styles.dialogBody}>{message}</Text> : null}
+        </View>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
-export const CenterCard = ({ visible, onClose, children }) => (
-  <Modal
-    visible={visible}
-    transparent
-    animationType="fade"
-    statusBarTranslucent
-    onRequestClose={onClose}
-  >
-    <View style={styles.dialogWrap}>
-      <Pressable style={styles.dialogDim} onPress={onClose} />
-      <View style={styles.dialog}>{children}</View>
-    </View>
-  </Modal>
-);
+export const CenterCard = ({ visible, onClose, children }) => {
+  if (!visible) {
+    return null;
+  }
+  return (
+    <Modal
+      visible
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={styles.dialogWrap}>
+        <Pressable style={styles.dialogDim} onPress={onClose} />
+        <View style={styles.dialog}>{children}</View>
+      </View>
+    </Modal>
+  );
+};
 
 const barFill = (value, color) => [
   styles.barFill,

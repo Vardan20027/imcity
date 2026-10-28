@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 
-const XmlIcon = ({ xml, width, height }) => (
+const XmlIcon = memo(({ xml, width, height }) => (
   <SvgXml xml={xml} width={width} height={height} />
-);
+));
 
 const PLAY_XML = `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#616161"/><path d="M27 18.2679C28.3333 19.0377 28.3333 20.9623 27 21.7321L18 26.9282C16.6667 27.698 15 26.7358 15 25.1962L15 14.8038C15 13.2642 16.6667 12.302 18 13.0718L27 18.2679Z" fill="white" fill-opacity="0.8"/></svg>`;
 

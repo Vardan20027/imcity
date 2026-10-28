@@ -675,6 +675,7 @@ const HomeScreen = ({ navigation }) => {
         initialNumToRender={2}
         maxToRenderPerBatch={2}
         windowSize={5}
+        updateCellsBatchingPeriod={50}
       />
       {cityOpen ? (
         <>

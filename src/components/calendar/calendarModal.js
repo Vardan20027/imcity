@@ -84,6 +84,10 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
     onClose();
   };
 
+  if (!visible) {
+    return null;
+  }
+
   return (
     <Modal
       visible={visible}
