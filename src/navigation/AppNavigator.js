@@ -2,12 +2,15 @@ import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '../screens/app/home';
-import ProfileScreen from '../screens/app/profile';
+import ProfileNavigator from '../screens/app/profile';
+import { HIDE_TAB_ROUTES } from '../screens/app/profile/routes';
 import NotificationsScreen from '../screens/app/notifications';
 import BusinessScreen from '../screens/app/business';
 import ServicesNavigator from '../screens/app/services';
+import FavoritesScreen from '../screens/app/favorites';
 import TabHomeIcon from '../components/svgs/tabbar/home';
 import TabServicesIcon from '../components/svgs/tabbar/services';
 import TabCenterIcon from '../components/svgs/tabbar/center';
@@ -60,6 +63,20 @@ const tabIcon = (Icon, focused, size = 24, height) => (
   </View>
 );
 
+const tabBarBase = bottomPad => ({
+  height: normalize(56) + bottomPad,
+  paddingTop: normalize(12),
+  paddingBottom: bottomPad,
+  paddingHorizontal: normalize(16),
+  borderTopWidth: 1,
+  borderTopColor: '#DFDDDD',
+  backgroundColor: COLORS.white,
+  elevation: 0,
+  shadowOpacity: 0,
+  shadowRadius: 0,
+  overflow: 'visible',
+});
+
 const Tabs = () => {
   const insets = useSafeAreaInsets();
   const bottomPad = Math.max(insets.bottom, normalize(12));
@@ -74,19 +91,7 @@ const Tabs = () => {
         tabBarActiveBackgroundColor: 'transparent',
         tabBarInactiveBackgroundColor: 'transparent',
         animation: 'fade',
-        tabBarStyle: {
-          height: normalize(56) + bottomPad,
-          paddingTop: normalize(12),
-          paddingBottom: bottomPad,
-          paddingHorizontal: normalize(16),
-          borderTopWidth: 1,
-          borderTopColor: '#DFDDDD',
-          backgroundColor: COLORS.white,
-          elevation: 0,
-          shadowOpacity: 0,
-          shadowRadius: 0,
-          overflow: 'visible',
-        },
+        tabBarStyle: tabBarBase(bottomPad),
         tabBarItemStyle: {
           height: normalize(44),
           padding: 0,
@@ -124,16 +129,20 @@ const Tabs = () => {
       />
       <Tab.Screen
         name={ROUT_NAMES.FAVORITES}
-        component={Placeholder}
+        component={FavoritesScreen}
         options={{
           tabBarIcon: ({ focused }) => tabIcon(TabHeartIcon, focused, 25, 21.875),
         }}
       />
       <Tab.Screen
         name={ROUT_NAMES.PROFILE}
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => tabIcon(TabProfileIcon, focused, 24),
+        component={ProfileNavigator}
+        options={({ route }) => {
+          const focused = getFocusedRouteNameFromRoute(route) ?? 'ProfileHome';
+          return {
+            tabBarIcon: ({ focused: active }) => tabIcon(TabProfileIcon, active, 24),
+            tabBarStyle: HIDE_TAB_ROUTES.has(focused) ? { display: 'none' } : tabBarBase(bottomPad),
+          };
         }}
       />
     </Tab.Navigator>

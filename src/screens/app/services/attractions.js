@@ -21,7 +21,9 @@ const AttractionCard = ({ item, onPress, expanded }) => {
   return (
     <TouchableOpacity activeOpacity={0.92} onPress={onPress} disabled={!onPress}>
       <View style={styles.attractionImage}>
-        <Image source={item.image} style={styles.attractionImageFill} resizeMode="cover" />
+        {item.image ? (
+          <Image source={item.image} style={styles.attractionImageFill} resizeMode="cover" />
+        ) : null}
         <TouchableOpacity
           style={[styles.favorite, saved && styles.chipPressed]}
           activeOpacity={0.8}
@@ -91,7 +93,10 @@ export const AttractionsScreen = () => {
 export const AttractionDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const item = ATTRACTIONS.find(a => a.id === route.params?.id) || ATTRACTIONS[0];
+  const item =
+    route.params?.place ||
+    ATTRACTIONS.find(a => a.id === route.params?.id) ||
+    ATTRACTIONS[0];
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
