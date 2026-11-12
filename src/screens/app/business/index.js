@@ -5,9 +5,11 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
+import { ROUT_NAMES } from '../../../constants/rout';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import styles from './styles';
 import MIcon from '../../../components/svgs';
@@ -39,6 +41,9 @@ import {
   CommentIcon,
 } from './icons';
 import { normalize } from '../../../assets/deviceInfo/normalize';
+import { useApiItem, useApiList } from '../../../state/reads/useList';
+import { getGallery, getPlaceById } from '../../../state/reads/operations';
+import { imageSource, mapGalleryPhoto, mapPlace, numericId } from '../../../state/reads/shape';
 
 const TABS = [
   { id: 'gallery', Icon: TabGridIcon },
@@ -118,16 +123,27 @@ const HeroGlow = () => (
   </Svg>
 );
 
+const pick = (params, key, fallback) =>
+  Object.prototype.hasOwnProperty.call(params, key) ? params[key] : fallback;
+
 const BusinessScreen = ({ navigation }) => {
   const route = useRoute();
   const params = route.params || {};
+  const remote = useApiItem(getPlaceById, numericId(params.id));
+  const gallery = useApiList(getGallery, numericId(params.id));
+  const galleryShots = (gallery || []).map(mapGalleryPhoto).filter(Boolean);
   const business = {
     ...DEFAULTS,
-    name: params.name || DEFAULTS.name,
-    handle: params.handle || DEFAULTS.handle,
-    logo: params.logo || DEFAULTS.logo,
-    description: params.description || DEFAULTS.description,
-    location: params.location || DEFAULTS.location,
+    name: pick(params, 'name', DEFAULTS.name) || DEFAULTS.name,
+    handle: pick(params, 'handle', DEFAULTS.handle) || DEFAULTS.handle,
+    logo: pick(params, 'logo', DEFAULTS.logo),
+    description: pick(params, 'description', DEFAULTS.description),
+    caption: pick(params, 'caption', DEFAULTS.caption),
+    location: pick(params, 'location', DEFAULTS.location),
+    phone: pick(params, 'phone', DEFAULTS.phone),
+    website: pick(params, 'website', DEFAULTS.website),
+    hours: pick(params, 'hours', DEFAULTS.hours),
+    ...mapPlace(remote),
   };
   const [tab, setTab] = useState(params.initialTab || 'gallery');
   const energiesOn = tab !== 'gallery';
@@ -150,9 +166,14 @@ const BusinessScreen = ({ navigation }) => {
           <Text style={styles.headerTitle}>{business.name}</Text>
           <Text style={styles.headerHandle}>{business.handle}</Text>
         </View>
-        <View style={[styles.headerSide, styles.headerRight]}>
+        <TouchableOpacity
+          style={[styles.headerSide, styles.headerRight]}
+          onPress={() =>
+            Share.share({ message: [business.name, business.website].filter(Boolean).join('\n') }).catch(() => {})
+          }
+        >
           <MoreIcon />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -169,7 +190,11 @@ const BusinessScreen = ({ navigation }) => {
             <HeartOutlineIcon />
           </View>
           <View style={styles.logoWrap}>
-            <Image source={business.logo} style={styles.logo} />
+            {business.logo ? (
+              <Image source={business.logo} style={styles.logo} />
+            ) : (
+              <View style={[styles.logo, styles.logoEmpty]} />
+            )}
             <View style={styles.chatBtn}>
               <ChatIcon />
             </View>
@@ -199,6 +224,12 @@ const BusinessScreen = ({ navigation }) => {
             styles.energyBtn,
             energiesOn ? styles.energyBtnActive : styles.energyBtnIdle,
           ]}
+          onPress={() =>
+            navigation.navigate(ROUT_NAMES.SHARE_EMOTIONS, {
+              name: business.name,
+              cover: business.logo,
+            })
+          }
         >
           <SparkleIcon dark={!energiesOn} />
           <Text
@@ -207,7 +238,7 @@ const BusinessScreen = ({ navigation }) => {
               energiesOn ? styles.energyLabelActive : styles.energyLabelIdle,
             ]}
           >
-            Փակել էներգիաներով
+            Կիսվել էմոցիաներով
           </Text>
         </TouchableOpacity>
 
@@ -226,9 +257,9 @@ const BusinessScreen = ({ navigation }) => {
 
         {tab === 'gallery' ? (
           <View style={styles.gallery}>
-            {GALLERY.map((item, index) => (
-              <View key={index} style={styles.galleryItem}>
-                <Image source={item.image} style={styles.galleryImage} fadeDuration={0} />
+            {(galleryShots.length ? galleryShots : GALLERY).map((item, index) => (
+              <View key={item.id || index} style={styles.galleryItem}>
+                <Image source={imageSource(item.image || item)} style={styles.galleryImage} fadeDuration={0} />
                 {item.avatar ? (
                   <Image source={item.avatar} style={styles.galleryAvatar} />
                 ) : null}
@@ -255,22 +286,24 @@ const BusinessScreen = ({ navigation }) => {
               <Text style={styles.more}>more</Text>
             </View>
             <View style={styles.infoRows}>
-              <View style={styles.infoRow}>
-                <PinIcon />
-                <Text style={styles.infoRowText}>{business.location}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <PhoneIcon />
-                <Text style={styles.infoRowText}>{DEFAULTS.phone}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <WebIcon />
-                <Text style={styles.infoRowText}>{DEFAULTS.website}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <ClockIcon />
-                <Text style={styles.infoRowText}>{DEFAULTS.hours}</Text>
-              </View>
+              {[
+                business.location ? { key: 'location', icon: <PinIcon />, text: business.location } : null,
+                business.phone ? { key: 'phone', icon: <PhoneIcon />, text: business.phone } : null,
+                business.website ? { key: 'web', icon: <WebIcon />, text: business.website } : null,
+                business.hours ? { key: 'hours', icon: <ClockIcon />, text: business.hours } : null,
+              ]
+                .filter(Boolean)
+                .map(row => (
+                  <TouchableOpacity
+                    key={row.key}
+                    style={styles.infoRow}
+                    disabled={row.key !== 'location'}
+                    onPress={() => navigation.navigate(ROUT_NAMES.MAP, { address: row.text })}
+                  >
+                    {row.icon}
+                    <Text style={styles.infoRowText}>{row.text}</Text>
+                  </TouchableOpacity>
+                ))}
             </View>
             <View style={styles.bungalows}>
               {BUNGALOWS.map((image, index) => (

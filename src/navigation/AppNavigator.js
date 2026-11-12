@@ -9,6 +9,10 @@ import ProfileNavigator from '../screens/app/profile';
 import { HIDE_TAB_ROUTES } from '../screens/app/profile/routes';
 import NotificationsScreen from '../screens/app/notifications';
 import BusinessScreen from '../screens/app/business';
+import RegisterNavigator from '../screens/app/business/register';
+import InfoNavigator from '../screens/app/business/info';
+import ShareEmotionsScreen from '../screens/app/business/share';
+import MapScreen from '../screens/app/map';
 import ServicesNavigator from '../screens/app/services';
 import FavoritesScreen from '../screens/app/favorites';
 import TabHomeIcon from '../components/svgs/tabbar/home';
@@ -124,8 +128,14 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Discover"
+        name="Map"
         component={Placeholder}
+        listeners={({ navigation }) => ({
+          tabPress: event => {
+            event.preventDefault();
+            navigation.navigate(ROUT_NAMES.MAP);
+          },
+        })}
         options={{
           tabBarIcon: ({ focused }) => tabIcon(TabCenterIcon, focused, 44),
         }}
@@ -172,6 +182,10 @@ const AppNavigator = () => (
       component={NotificationsScreen}
     />
     <Stack.Screen name={ROUT_NAMES.BUSINESS} component={BusinessScreen} />
+    <Stack.Screen name={ROUT_NAMES.BUSINESS_REGISTER} component={RegisterNavigator} />
+    <Stack.Screen name={ROUT_NAMES.BUSINESS_INFO} component={InfoNavigator} />
+    <Stack.Screen name={ROUT_NAMES.SHARE_EMOTIONS} component={ShareEmotionsScreen} />
+    <Stack.Screen name={ROUT_NAMES.MAP} component={MapScreen} />
   </Stack.Navigator>
 );
 

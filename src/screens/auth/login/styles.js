@@ -76,6 +76,14 @@ const styles = StyleSheet.create({
       fontWeight: '500',
       color: COLORS.textPrimary,
     },
+    forgotButton: {
+      alignSelf: 'center',
+      marginTop: normalize(16),
+    },
+    forgotLabel: {
+      fontSize: normalize(14),
+      color: COLORS.primary,
+    },
   });
 
 export default styles;

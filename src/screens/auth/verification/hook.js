@@ -1,17 +1,36 @@
-import dispatch from "../../../utils/dispatch/dispatch";
-import { userSignIn} from "../../../state/user/operations/userSignIn";
-import { navigate } from '../../../services/navigation'
-import { ROUT_NAMES } from '../../../constants/rout'
-import {userSignUp} from "../../../state/user/operations/userSignUp";
+import { useNavigation } from '@react-navigation/native';
+import dispatch from '../../../utils/dispatch/dispatch';
+import { verifyCode } from '../../../state/user/operations/verifyCode';
+import { resendCode } from '../../../state/user/operations/resendCode';
 
 function useContainer() {
-  const handleVerifyAction = ({ token, code }) => {
+  const navigation = useNavigation();
+
+  const handleVerifyAction = async ({ token, code }) => {
+    try {
       console.log(token, code);
-    dispatch(userSignIn({ token, code }));
-    // navigate(ROUT_NAMES.VERIFICATION);
+      const response = await dispatch(verifyCode({ code, token })).unwrap();
+      console.log('Success payload:', response);
+
+      navigation.navigate('ChooseCity');
+    } catch (error) {
+      console.error('Failed to verify code:', error);
+    }
   };
 
-  return { handleVerifyAction };
+  const handleResendAction = async ({ token }) => {
+    try {
+      console.log(token);
+      const response = await dispatch(resendCode({ token })).unwrap();
+      console.log('Success payload:', response);
+      return true;
+    } catch (error) {
+      console.error('Failed to resend code:', error);
+      return false;
+    }
+  };
+
+  return { handleVerifyAction, handleResendAction };
 }
 
 export { useContainer };

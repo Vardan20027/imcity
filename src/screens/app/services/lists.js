@@ -14,6 +14,9 @@ import {
 } from './parts';
 import { GRID_BY_KEY, HOTELS } from './data';
 import { openBusiness } from './attractions';
+import { useApiList } from '../../../state/reads/useList';
+import { getPlaces } from '../../../state/reads/operations';
+import { nameOf, remoteImage } from '../../../state/reads/shape';
 import styles from './styles';
 
 const PlaceCard = ({ item, onPress }) => {
@@ -48,7 +51,19 @@ export const PlaceGridScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const title = route.params?.title || 'Հյուրանոցներ';
-  const itemsSource = GRID_BY_KEY[route.params?.key] || HOTELS;
+  const remotePlaces = useApiList(getPlaces);
+  const fallback = GRID_BY_KEY[route.params?.key] || HOTELS;
+  const itemsSource = remotePlaces
+    ? remotePlaces.map((item, index) => {
+        const local = fallback[index % fallback.length];
+        return {
+          id: item?.id ?? local.id,
+          name: nameOf(item) || local.name,
+          image: remoteImage(item?.image || item?.cover || item?.photo) || local.image,
+          logo: remoteImage(item?.logo) || local.logo,
+        };
+      })
+    : fallback;
   const [query, setQuery] = useState('');
   const { selectedIds, toggle } = useEmotionFilter();
   const items = useMemo(

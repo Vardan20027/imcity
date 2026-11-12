@@ -88,6 +88,9 @@ const styles = StyleSheet.create({
     borderRadius: normalize(56),
     backgroundColor: COLORS.white,
   },
+  logoEmpty: {
+    backgroundColor: '#F3F3F3',
+  },
   chatBtn: {
     position: 'absolute',
     right: normalize(-6),
@@ -238,10 +241,11 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: normalize(8),
   },
   infoRowText: {
+    flex: 1,
     fontFamily: Fonts.arm.regular,
     fontSize: normalize(13),
     lineHeight: normalize(18),

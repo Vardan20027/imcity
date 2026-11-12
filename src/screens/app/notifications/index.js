@@ -46,7 +46,7 @@ const ITEMS = [
   },
 ];
 
-const InviteCard = ({ item }) => (
+const InviteCard = ({ item, onAccept, onDecline }) => (
   <View style={styles.inviteRow}>
     <Image source={item.cover} style={styles.inviteCover} resizeMode="cover" />
     <View style={styles.inviteBody}>
@@ -59,10 +59,10 @@ const InviteCard = ({ item }) => (
         <Text style={styles.inviteEvent}>{item.event}</Text>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.accept} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.accept} activeOpacity={0.85} onPress={onAccept}>
           <Text style={styles.acceptLabel}>Ընդունել</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.decline} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.decline} activeOpacity={0.85} onPress={onDecline}>
           <Text style={styles.declineLabel}>Մերժել</Text>
         </TouchableOpacity>
       </View>
@@ -99,7 +99,8 @@ const UserCard = ({ item }) => (
 );
 
 const NotificationsScreen = ({ navigation }) => {
-  const [items] = useState(ITEMS);
+  const [items, setItems] = useState(ITEMS);
+  const remove = id => setItems(current => current.filter(item => item.id !== id));
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -132,7 +133,9 @@ const NotificationsScreen = ({ navigation }) => {
         >
           {items.map((item, index) => (
             <View key={item.id}>
-              {item.type === 'invite' ? <InviteCard item={item} /> : null}
+              {item.type === 'invite' ? (
+                <InviteCard item={item} onAccept={() => remove(item.id)} onDecline={() => remove(item.id)} />
+              ) : null}
               {item.type === 'event' ? <EventCard item={item} /> : null}
               {item.type === 'user' ? <UserCard item={item} /> : null}
               {index === 0 ? <View style={styles.divider} /> : null}

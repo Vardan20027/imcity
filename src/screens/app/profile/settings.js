@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { EMOTIONS } from '../../../constants/emotions/data';
 import { ROUT_NAMES } from '../../../constants/rout';
+import { useCreatedBusiness } from '../business/register/store';
 import CalendarModal from '../../../components/calendar/calendarModal';
 import {
   BUSINESSES,
@@ -56,7 +58,28 @@ import {
   ToggleRow,
 } from './parts';
 import { P } from './routes';
+import { useContainer } from './hook';
+import { useApiList } from '../../../state/reads/useList';
+import { getCities, getEmotions } from '../../../state/reads/operations';
+import { nameOf } from '../../../state/reads/shape';
 import styles from './styles';
+
+const GENDER_TO_API = {
+  Իգական: 'female',
+  Արական: 'male',
+};
+
+const profilePayload = ({ name, handle, birthday, gender, city }) => {
+  const parts = name.trim().split(/\s+/);
+  return {
+    first_name: parts[0] || '',
+    last_name: parts.slice(1).join(' '),
+    username: handle.trim().replace(/^@/, ''),
+    birthday,
+    gender: GENDER_TO_API[gender] || gender,
+    city,
+  };
+};
 
 const cardLook = (on, backgroundColor) => [
   styles.emotionCard,
@@ -76,6 +99,7 @@ const formatDate = date => {
 
 export const SettingsScreen = ({ navigation }) => {
   const user = useProfile();
+  const created = useCreatedBusiness();
   const [businessOpen, setBusinessOpen] = useState(false);
 
   return (
@@ -100,7 +124,13 @@ export const SettingsScreen = ({ navigation }) => {
       <TouchableOpacity
         style={styles.businessRow}
         activeOpacity={0.8}
-        onPress={() => setBusinessOpen(true)}
+        onPress={() => {
+          if (created) {
+            setBusinessOpen(true);
+            return;
+          }
+          navigation.navigate(ROUT_NAMES.BUSINESS_REGISTER);
+        }}
       >
         <View style={styles.businessLeft}>
           <StoreIcon />
@@ -161,8 +191,8 @@ export const SettingsScreen = ({ navigation }) => {
             activeOpacity={0.7}
             onPress={() => {
               setBusinessOpen(false);
-              if (item.id === 'business') {
-                navigation.navigate(ROUT_NAMES.BUSINESS);
+              if (item.id === 'business' && created) {
+                navigation.navigate(ROUT_NAMES.BUSINESS_INFO);
               }
             }}
           >
@@ -176,7 +206,9 @@ export const SettingsScreen = ({ navigation }) => {
 };
 
 export const EditProfileScreen = ({ navigation }) => {
+  const { handleUpdateProfile, handleUpdateProfileImage } = useContainer();
   const user = useProfile();
+  const [saving, setSaving] = useState(false);
   const [name, setName] = useState(user.name);
   const [handle, setHandle] = useState(user.handle);
   const [birthday, setBirthday] = useState(user.birthday);
@@ -189,6 +221,37 @@ export const EditProfileScreen = ({ navigation }) => {
   const [cityQuery, setCityQuery] = useState('');
   const cities = CITIES.filter(item => item.toLowerCase().includes(cityQuery.trim().toLowerCase()));
 
+  const saveProfile = async () => {
+    if (saving) return;
+    setSaving(true);
+    const ok = await handleUpdateProfile(profilePayload({ name, handle, birthday, gender, city }));
+    setSaving(false);
+    if (!ok) return;
+    updateProfile({ name: name.trim(), handle: handle.trim(), birthday, gender, city });
+    navigation.goBack();
+  };
+
+  const uploadPhoto = launch => {
+    setPhotoOpen(false);
+    setTimeout(async () => {
+      try {
+        const result = await launch({ mediaType: 'photo', selectionLimit: 1, quality: 0.8 });
+        const asset = result.assets?.[0];
+        if (!asset?.uri) return;
+        const ok = await handleUpdateProfileImage({
+          uri: asset.uri,
+          type: asset.type,
+          fileName: asset.fileName,
+        });
+        if (ok) {
+          updateProfile({ avatar: { uri: asset.uri } });
+        }
+      } catch (error) {
+        console.error('Failed to update profile image:', error);
+      }
+    }, 350);
+  };
+
   return (
     <Screen
       scroll
@@ -196,11 +259,8 @@ export const EditProfileScreen = ({ navigation }) => {
         <View style={styles.footerBtn}>
           <PrimaryButton
             label="Պահպանել"
-            disabled={!name.trim() || !handle.trim()}
-            onPress={() => {
-              updateProfile({ name: name.trim(), handle: handle.trim(), birthday, gender, city });
-              navigation.goBack();
-            }}
+            disabled={!name.trim() || !handle.trim() || saving}
+            onPress={saveProfile}
           />
         </View>
       }
@@ -230,10 +290,10 @@ export const EditProfileScreen = ({ navigation }) => {
         <Field label="Քաղաք" value={city} onPress={() => setCityOpen(true)} icon={<ChevronRight />} />
       </View>
       <CenterCard visible={photoOpen} onClose={() => setPhotoOpen(false)}>
-        <TouchableOpacity style={styles.optionRow} onPress={() => setPhotoOpen(false)}>
+        <TouchableOpacity style={styles.optionRow} onPress={() => uploadPhoto(launchCamera)}>
           <Text style={styles.optionText}>Լուսանկարել</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionRow} onPress={() => setPhotoOpen(false)}>
+        <TouchableOpacity style={styles.optionRow} onPress={() => uploadPhoto(launchImageLibrary)}>
           <Text style={styles.optionText}>Ընտրել պատկերասրահից</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -307,7 +367,9 @@ export const CityScreen = ({ navigation }) => {
   const user = useProfile();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(user.city);
-  const cities = CITIES.filter(item => item.toLowerCase().includes(query.trim().toLowerCase()));
+  const remoteCities = useApiList(getCities);
+  const source = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
+  const cities = source.filter(item => item.toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Screen scroll>
       <PageHeader title="Քաղաք" onBack={() => navigation.goBack()} />
@@ -357,6 +419,17 @@ export const LanguageScreen = ({ navigation }) => {
 };
 
 export const EmotionsScreen = ({ navigation }) => {
+  const remoteEmotions = useApiList(getEmotions);
+  const emotions = remoteEmotions
+    ? remoteEmotions.map((item, index) => {
+        const style = EMOTIONS[index % EMOTIONS.length];
+        return {
+          ...style,
+          id: item?.id ?? style.id,
+          title: nameOf(item) || style.title,
+        };
+      })
+    : EMOTIONS;
   const [selected, setSelected] = useState(() => new Set([2, 3, 5]));
   const toggle = id => {
     setSelected(prev => {
@@ -386,7 +459,7 @@ export const EmotionsScreen = ({ navigation }) => {
       <View style={styles.form}>
         <Text style={styles.hint}>Ընտրեք մինչև 3 էմոցիա, որոնք ցանկանում եք զգալ</Text>
         <View style={styles.emotionGrid}>
-          {EMOTIONS.map(item => {
+          {emotions.map(item => {
             const on = selected.has(item.id);
             return (
               <TouchableOpacity
@@ -477,15 +550,28 @@ const Rule = ({ ok, label }) => (
 );
 
 export const ChangePasswordScreen = ({ navigation }) => {
+  const { handleChangePassword } = useContainer();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [repeat, setRepeat] = useState('');
   const [show, setShow] = useState(false);
   const [done, setDone] = useState(false);
+  const [saving, setSaving] = useState(false);
   const lengthOk = next.length >= 8;
   const caseOk = /[a-z]/.test(next) && /[A-Z]/.test(next);
   const symbolOk = /[0-9]/.test(next) || /[^A-Za-z0-9]/.test(next);
   const ready = current.length > 0 && lengthOk && caseOk && symbolOk && next === repeat;
+  const savePassword = async () => {
+    if (saving) return;
+    setSaving(true);
+    const ok = await handleChangePassword({
+      current_password: current,
+      password: next,
+      password_confirmation: repeat,
+    });
+    setSaving(false);
+    if (ok) setDone(true);
+  };
   const eye = (
     <TouchableOpacity onPress={() => setShow(value => !value)}>
       <EyeIcon off={!show} />
@@ -504,9 +590,9 @@ export const ChangePasswordScreen = ({ navigation }) => {
         <Rule ok={symbolOk} label="Պետք է լինի թիվ կամ հստակ նշան" />
         <PrimaryButton
           label="Պահպանել"
-          disabled={!ready}
+          disabled={!ready || saving}
           style={styles.buttonSpace}
-          onPress={() => setDone(true)}
+          onPress={savePassword}
         />
       </View>
       <SuccessModal

@@ -8,6 +8,7 @@ import {
   ScrollView,
   FlatList,
   Image,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +17,9 @@ import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import { EMOTIONS } from '../../../constants/emotions/data';
 import { ROUT_NAMES } from '../../../constants/rout';
+import { useApiList } from '../../../state/reads/useList';
+import { getCities } from '../../../state/reads/operations';
+import { nameOf } from '../../../state/reads/shape';
 import styles from './styles';
 import {
   FavoriteIcon,
@@ -121,6 +125,7 @@ const FEED = [
   {
     id: 'event-1',
     type: 'event',
+    emotions: [2, 4],
     author: 'Scorpions',
     logo: require('../../../assets/images/home/scorpions-logo.png'),
     media: require('../../../assets/images/home/concert.png'),
@@ -161,6 +166,7 @@ const FEED = [
   {
     id: 'business-1',
     type: 'business',
+    emotions: [1, 3],
     author: 'Armenia hotel',
     logo: require('../../../assets/images/home/hotel-logo.png'),
     media: require('../../../assets/images/home/hotel.png'),
@@ -197,6 +203,7 @@ const FEED = [
   {
     id: 'memory-1',
     type: 'memory',
+    emotions: [7],
     author: 'Armenia hotel',
     logo: require('../../../assets/images/home/memory-logo.png'),
     media: require('../../../assets/images/home/memory.png'),
@@ -234,6 +241,7 @@ const FEED = [
   },
   {
     id: 'attraction-1',
+    emotions: [5],
     type: 'attraction',
     author: 'Խուստուփ լեռ',
     media: require('../../../assets/images/home/attraction.png'),
@@ -298,8 +306,7 @@ function HomeHeader({ city, onToggleCity, onNotifications }) {
   );
 }
 
-function HomeSearchBar() {
-  const [query, setQuery] = useState('');
+function HomeSearchBar({ value, onChangeText }) {
   return (
     <View style={styles.searchBox}>
       <MIcon
@@ -310,9 +317,11 @@ function HomeSearchBar() {
       />
       <TextInput
         style={styles.searchInput}
-        value={query}
-        onChangeText={setQuery}
+        value={value}
+        onChangeText={onChangeText}
         returnKeyType="search"
+        placeholder="Որոնել"
+        placeholderTextColor="#B2B2B2"
       />
     </View>
   );
@@ -523,6 +532,7 @@ const ActionsRow = ({ item }) => {
 
 const PostCard = memo(({ item }) => {
   const navigation = useNavigation();
+  const [open, setOpen] = useState(false);
   const openPoster = () => {
     navigation.navigate(ROUT_NAMES.BUSINESS, {
       name: item.author === 'Armenia hotel' ? 'Արմենիա հյուրանոց' : item.author,
@@ -557,12 +567,15 @@ const PostCard = memo(({ item }) => {
         activeOpacity={0.8}
         delayPressIn={0}
         hitSlop={HIT_SLOP}
+        onPress={() =>
+          Share.share({ message: [item.author, item.description].filter(Boolean).join('\n') }).catch(() => {})
+        }
       >
         <MoreIcon />
       </TouchableOpacity>
     </View>
 
-    <View style={styles.media}>
+    <TouchableOpacity activeOpacity={0.9} onPress={openPoster} style={styles.media}>
       <Image
         source={item.media}
         style={styles.mediaFill}
@@ -570,7 +583,7 @@ const PostCard = memo(({ item }) => {
         fadeDuration={0}
       />
       <MediaOverlays item={item} showPills={item.type === 'event'} />
-    </View>
+    </TouchableOpacity>
 
     {item.type !== 'attraction' ? <ActionsRow item={item} /> : null}
 
@@ -584,6 +597,7 @@ const PostCard = memo(({ item }) => {
 
       <View>
         <Text
+          numberOfLines={open ? undefined : 2}
           style={[
             styles.description,
             item.type === 'memory' && styles.descriptionMuted,
@@ -593,11 +607,13 @@ const PostCard = memo(({ item }) => {
         >
           {item.description}
         </Text>
-        <Text style={styles.more}>more</Text>
+        <TouchableOpacity onPress={() => setOpen(value => !value)}>
+          <Text style={styles.more}>{open ? 'փակել' : 'more'}</Text>
+        </TouchableOpacity>
       </View>
 
       {item.location ? (
-        <View>
+        <TouchableOpacity onPress={() => navigation.navigate(ROUT_NAMES.MAP, { address: item.location })}>
           <View style={styles.locationRow}>
             <LocationIcon />
             <Text
@@ -610,7 +626,7 @@ const PostCard = memo(({ item }) => {
             </Text>
           </View>
           {item.price ? <Text style={styles.price}>{item.price}</Text> : null}
-        </View>
+        </TouchableOpacity>
       ) : null}
     </View>
   </View>
@@ -624,7 +640,26 @@ const renderPost = ({ item }) => <PostCard item={item} />;
 const HomeScreen = ({ navigation }) => {
   const [city, setCity] = useState('Երևան');
   const [cityOpen, setCityOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState(() => new Set(DEFAULT_SELECTED));
+  const remoteCities = useApiList(getCities);
+  const cityNames = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
+  const needle = query.trim().toLowerCase();
+  const feed = FEED.filter(item => {
+    const matchesEmotion =
+      !selectedIds.size || (item.emotions || []).some(id => selectedIds.has(id));
+    if (!matchesEmotion) {
+      return false;
+    }
+    if (!needle) {
+      return true;
+    }
+    return [item.author, item.description, item.location, item.memoryAuthor]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .includes(needle);
+  });
 
   const toggleEmotion = useCallback(id => {
     setSelectedIds(prev => {
@@ -662,10 +697,11 @@ const HomeScreen = ({ navigation }) => {
         onToggleCity={onToggleCity}
         onNotifications={onNotifications}
       />
-      <HomeSearchBar />
+      <HomeSearchBar value={query} onChangeText={setQuery} />
       <Categories selectedIds={selectedIds} onToggle={toggleEmotion} />
       <FlatList
-        data={FEED}
+        data={feed}
+        ListEmptyComponent={<Text style={styles.more}>Արդյունք չկա</Text>}
         keyExtractor={p => p.id}
         renderItem={renderPost}
         ItemSeparatorComponent={PostSeparator}
@@ -684,7 +720,7 @@ const HomeScreen = ({ navigation }) => {
             onPress={closeCityMenu}
           />
           <View style={styles.cityMenu}>
-            {CITIES.map(name => (
+            {cityNames.map(name => (
               <TouchableOpacity
                 key={name}
                 delayPressIn={0}

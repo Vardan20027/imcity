@@ -1,31 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { verifyCodeEndpoint } from '../endpoints';
-import httpClient from '../../../services/HttpClient';
+import { postUser } from './postUser';
 
-export const verifyCode = createAsyncThunk(
-  'user/verifyCode',
-  async ({ code, callback }, { getState }) => {
-    try {
-      const {
-        user: { verification_token },
-      } = getState();
-
-      console.log('user/verifyCode------', verification_token);
-
-      const { url } = verifyCodeEndpoint;
-
-      const { data } = await httpClient.post(url, {
-        code,
-        token: verification_token,
-      });
-
-      if (callback) callback();
-
-      console.log(data, 'DATA');
-      return data;
-    } catch (error) {
-      console.error('verifyCode error:', error);
-      throw error;
-    }
-  },
-);
+export const verifyCode = createAsyncThunk('user/verifyCode', async payload => {
+  try {
+    return await postUser(verifyCodeEndpoint.url, payload);
+  } catch (err) {
+    console.log(err.message, 'ERROR');
+    throw err;
+  }
+});

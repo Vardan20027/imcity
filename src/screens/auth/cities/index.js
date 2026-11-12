@@ -4,6 +4,9 @@ import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
 import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
+import { useApiList } from '../../../state/reads/useList';
+import { getCities } from '../../../state/reads/operations';
+import { nameOf } from '../../../state/reads/shape';
 
 const CITIES = [
   { id: '1', name: 'Երևան' },
@@ -15,6 +18,13 @@ const CITIES = [
 
 const ChooseCity = ({ navigation }) => {
   const [selectedCity, setSelectedCity] = useState(null);
+  const remoteCities = useApiList(getCities);
+  const cities = remoteCities
+    ? remoteCities.map(city => ({
+        id: city?.id ?? nameOf(city),
+        name: nameOf(city),
+      })).filter(city => city.name)
+    : CITIES;
   const handleContinue = () => {
     // if (!selectedCity) return;
     navigation.navigate('Emotions');
@@ -25,7 +35,7 @@ const ChooseCity = ({ navigation }) => {
       <OnboardingHeader currentStep={3} totalSteps={5} onBack={() => navigation.goBack()} />
       <Text style={styles.title}>Ընտրիր քաղաքը</Text>
 
-      {CITIES.map((city, index) => {
+      {cities.map(city => {
         const selected = selectedCity === city.id;
         return (
           <TouchableOpacity

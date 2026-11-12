@@ -65,6 +65,12 @@ const LoginScreen = ({ navigation }) => {
           onPress={() => handleLoginAction({ email, password})}
           disabled={phone.length !== ARMENIA_PHONE_LENGTH}
         />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword', { email })}
+          style={styles.forgotButton}
+        >
+          <Text style={styles.forgotLabel}>Մոռացե՞լ եք գաղտնաբառը</Text>
+        </TouchableOpacity>
       </View>
 
       <View>

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { COLORS } from '../../../assets/rootStyles';
-import { useProfile } from './data';
+import dispatch from '../../../utils/dispatch/dispatch';
+import { getCurrentUser } from '../../../state/reads/operations';
+import { mapCurrentUser } from '../../../state/reads/shape';
+import { updateProfile, useProfile } from './data';
 import ProfileBody from './profileBody';
 import { P } from './routes';
 
@@ -9,6 +12,22 @@ const Stack = createNativeStackNavigator();
 
 const ProfileHome = ({ navigation }) => {
   const user = useProfile();
+
+  useEffect(() => {
+    let live = true;
+    dispatch(getCurrentUser())
+      .unwrap()
+      .then(data => {
+        if (!live) return;
+        const patch = mapCurrentUser(data);
+        if (Object.keys(patch).length) updateProfile(patch);
+      })
+      .catch(error => console.error('Failed to load current user:', error));
+    return () => {
+      live = false;
+    };
+  }, []);
+
   return (
     <ProfileBody
       user={user}

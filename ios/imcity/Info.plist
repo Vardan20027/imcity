@@ -35,6 +35,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>Լուսանկարը օգտագործվում է պրոֆիլի նկարի համար</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Պատկերասրահից ընտրված նկարը օգտագործվում է պրոֆիլի համար</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

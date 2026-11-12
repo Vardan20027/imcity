@@ -128,6 +128,7 @@ export const AttractionDetailScreen = () => {
 
 export const openBusiness = (navigation, item) => {
   navigation.navigate(ROUT_NAMES.BUSINESS, {
+    id: item.id,
     name: item.name,
     handle: `@${item.name.toLowerCase()}`,
     logo: item.logo,

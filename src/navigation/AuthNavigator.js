@@ -8,6 +8,8 @@ import ChooseCity from '../screens/auth/cities';
 import EmotionsScreen from '../screens/auth/emotions';
 import InformationScreen from '../screens/auth/information';
 import AddFriend from '../screens/auth/addFriend';
+import ForgotPasswordScreen from '../screens/auth/password/forgot';
+import ResetPasswordScreen from '../screens/auth/password/reset';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ const AuthNavigator = () => (
   >
     <Stack.Screen name="LanguageSelect" component={LanguageSelectScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+    <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
     <Stack.Screen name="Verification" component={VerificationScreen} />
     <Stack.Screen name="ChooseCity" component={ChooseCity} />
     <Stack.Screen name="Emotions" component={EmotionsScreen} />

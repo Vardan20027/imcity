@@ -5,6 +5,7 @@ import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
 import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
+import { useContainer } from './hook';
 
 const CODE_LENGTH = 6;
 const RESEND_COUNTDOWN = 59;
@@ -21,9 +22,11 @@ const OTPInput = ({ value, isFocused, onPress }) => (
 );
 
 const VerificationScreen = ({ navigation, route }) => {
+  const { handleVerifyAction, handleResendAction } = useContainer();
   const token = route?.params?.token;
   const [code, setCode] = useState('');
   const [countdown, setCountdown] = useState(RESEND_COUNTDOWN);
+  const [sending, setSending] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const inputRef = useRef(null);
 
@@ -45,8 +48,12 @@ const VerificationScreen = ({ navigation, route }) => {
     setFocusedIndex(Math.min(digits.length, CODE_LENGTH - 1));
   };
 
-  const handleResend = () => {
-    if (countdown > 0) return;
+  const handleResend = async () => {
+    if (countdown > 0 || sending) return;
+    setSending(true);
+    const ok = await handleResendAction({ token });
+    setSending(false);
+    if (!ok) return;
     setCode('');
     setFocusedIndex(0);
     setCountdown(RESEND_COUNTDOWN);
@@ -54,7 +61,7 @@ const VerificationScreen = ({ navigation, route }) => {
   };
 
   const handleContinue = () => {
-    navigation.navigate('ChooseCity');
+    handleVerifyAction({ token, code });
   };
 
   const canResend = countdown === 0;
@@ -93,9 +100,9 @@ const VerificationScreen = ({ navigation, route }) => {
 
       <View style={styles.resendRow}>
         <Text style={styles.resendText}>Չե՞ս ստացել կոդը։ </Text>
-        <TouchableOpacity onPress={handleResend} disabled={!canResend}>
+        <TouchableOpacity onPress={handleResend} disabled={!canResend || sending}>
           <Text
-            style={[styles.resendLink, !canResend && styles.resendLinkDisabled]}
+            style={[styles.resendLink, (!canResend || sending) && styles.resendLinkDisabled]}
           >
             {canResend
               ? 'Կրկին ուղարկել'

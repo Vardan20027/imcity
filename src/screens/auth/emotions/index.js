@@ -6,10 +6,24 @@ import styles from './styles';
 import MIcon from '../../../components/svgs';
 import OnboardingHeader from '../../../components/onboarding/header';
 import { EMOTIONS } from '../../../constants/emotions/data';
+import { useApiList } from '../../../state/reads/useList';
+import { getEmotions } from '../../../state/reads/operations';
+import { nameOf } from '../../../state/reads/shape';
 
 
 const EmotionsScreen = ({ navigation }) => {
   const [selectedIds, setSelectedIds] = useState([]);
+  const remoteEmotions = useApiList(getEmotions);
+  const emotions = remoteEmotions
+    ? remoteEmotions.map((item, index) => {
+        const style = EMOTIONS[index % EMOTIONS.length];
+        return {
+          ...style,
+          id: item?.id ?? style.id,
+          title: nameOf(item) || style.title,
+        };
+      })
+    : EMOTIONS;
   const MAX = 3;
 
   const handleContinue = () => {
@@ -40,7 +54,7 @@ const EmotionsScreen = ({ navigation }) => {
       <Text style={styles.subtitle}>Մինչև 3 տարբերակ</Text>
 
       <View style={styles.container}>
-        {EMOTIONS.map((item, index) => {
+        {emotions.map(item => {
           const isSelected = selectedIds.includes(item.id);
           return (
             <TouchableOpacity

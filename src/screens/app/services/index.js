@@ -11,6 +11,9 @@ import { EmotionMarks, SearchField, ServiceIcon } from './parts';
 import { CITIES, SERVICE_CATEGORIES, SHOPS } from './data';
 import { AttractionsScreen, AttractionDetailScreen } from './attractions';
 import { CategoryListScreen, PlaceGridScreen } from './lists';
+import { useApiList } from '../../../state/reads/useList';
+import { getCategories, getCities } from '../../../state/reads/operations';
+import { nameOf } from '../../../state/reads/shape';
 import styles from './styles';
 
 const Stack = createNativeStackNavigator();
@@ -34,6 +37,20 @@ const ServicesHome = ({ navigation }) => {
   const [city, setCity] = useState('Երևան');
   const [cityOpen, setCityOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const remoteCategories = useApiList(getCategories);
+  const remoteCities = useApiList(getCities);
+  const categories = remoteCategories
+    ? remoteCategories.map((item, index) => {
+        const fallback = CATEGORIES[index % CATEGORIES.length];
+        return {
+          key: String(item?.id ?? item?.slug ?? index),
+          title: nameOf(item) || fallback.title,
+          icon: fallback.icon,
+          screen: 'grid',
+        };
+      }).filter(item => item.title)
+    : CATEGORIES;
+  const cityNames = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
 
   const onNotifications = useCallback(() => {
     navigation.navigate(ROUT_NAMES.NOTIFICATIONS);
@@ -54,7 +71,7 @@ const ServicesHome = ({ navigation }) => {
     navigation.navigate('PlaceGrid', { title: item.title, key: item.key });
   };
 
-  const visible = CATEGORIES.filter(item =>
+  const visible = categories.filter(item =>
     item.title.toLowerCase().includes(query.trim().toLowerCase()),
   );
   const showFeatured = 'տեսարժան վայրեր'.includes(query.trim().toLowerCase()) || !query.trim();
@@ -134,7 +151,7 @@ const ServicesHome = ({ navigation }) => {
         <>
           <Pressable style={styles.cityMenuBackdrop} onPress={() => setCityOpen(false)} />
           <View style={styles.cityMenu}>
-            {CITIES.map(name => (
+            {cityNames.map(name => (
               <TouchableOpacity
                 key={name}
                 style={[styles.cityOption, name === city && styles.cityOptionSelected]}
