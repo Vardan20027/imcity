@@ -17,6 +17,7 @@ import { normalize } from '../../../../assets/deviceInfo/normalize';
 import { PageHeader, PrimaryButton, BottomSheet } from '../../profile/parts';
 import { CATEGORIES, DAYS, HOURS, STEP_COUNT, formatClock } from './data';
 import styles from './styles';
+import { useT } from '../../../../locales/useT';
 
 const Icon = ({ children }) => (
   <Svg width={normalize(24)} height={normalize(24)} viewBox="0 0 24 24" fill="none">
@@ -165,21 +166,22 @@ export const RegField = ({
   autoCapitalize = 'none',
   right,
 }) => {
+  const t = useT();
   const Box = onPress ? TouchableOpacity : View;
   const pressable = onPress ? { activeOpacity: 0.75, onPress } : null;
   return (
   <View style={styles.field}>
-    {label ? <Text style={styles.fieldLabel}>{label}</Text> : null}
+    {label ? <Text style={styles.fieldLabel}>{t(label)}</Text> : null}
     <Box {...pressable} style={styles.fieldBox}>
       {onPress ? (
         <Text style={[styles.fieldValue, !value && styles.placeholder]} numberOfLines={1}>
-          {value || placeholder}
+          {value || t(placeholder)}
         </Text>
       ) : (
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          placeholder={placeholder}
+          placeholder={t(placeholder)}
           placeholderTextColor="#B5B5B5"
           style={styles.fieldInput}
           keyboardType={keyboardType}

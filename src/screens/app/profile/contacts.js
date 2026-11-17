@@ -18,16 +18,19 @@ import styles from './styles';
 const ContactsScreen = ({ navigation }) => {
   const [tab, setTab] = useState('all');
   const [query, setQuery] = useState('');
-  const [contacts, setContacts] = useState(CONTACTS);
+  const [contacts, setContacts] = useState([]);
   const [menu, setMenu] = useState(null);
   const [sent, setSent] = useState(false);
   const q = query.trim().toLowerCase();
   const all = contacts.filter(item => !q || item.name.toLowerCase().includes(q));
-  const suggested = SUGGESTED.filter(item => !q || item.name.toLowerCase().includes(q));
+  const suggested = [].filter(item => !q || item.name.toLowerCase().includes(q));
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <PageHeader title={`Կոնտակտներ (${contacts.length})`} onBack={() => navigation.goBack()} />
+      <PageHeader
+        title={contacts.length ? `Կոնտակտներ (${contacts.length})` : 'Կոնտակտներ'}
+        onBack={() => navigation.goBack()}
+      />
       <SearchField value={query} onChangeText={setQuery} />
       <SegmentTabs
         tabs={[

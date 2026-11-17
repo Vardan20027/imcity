@@ -17,7 +17,6 @@ import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { FireIcon, HeartFillIcon, LeafIcon } from '../home/icons';
-import { EMOTION_BARS } from './data';
 import {
   CheckCircleIcon,
   ChevronRight,
@@ -26,6 +25,7 @@ import {
   SparkleIcon,
 } from './icons';
 import styles from './styles';
+import { useT } from '../../../locales/useT';
 
 export const Screen = ({ children, scroll, footer, edges = ['top'] }) => (
   <SafeAreaView style={styles.screen} edges={edges}>
@@ -45,7 +45,9 @@ export const Screen = ({ children, scroll, footer, edges = ['top'] }) => (
   </SafeAreaView>
 );
 
-export const PageHeader = ({ title, onBack, right }) => (
+export const PageHeader = ({ title, onBack, right }) => {
+  const t = useT();
+  return (
   <View>
     <View style={styles.pageHeader}>
       <TouchableOpacity
@@ -56,14 +58,17 @@ export const PageHeader = ({ title, onBack, right }) => (
         <MIcon name={ICON_NAMES.ARROWS.BACK} width={normalize(20)} height={normalize(20)} />
       </TouchableOpacity>
       <Text style={styles.pageTitle} numberOfLines={1}>
-        {title}
+        {typeof title === 'string' ? t(title) : title}
       </Text>
       {right || <View style={styles.iconBtn} />}
     </View>
   </View>
-);
+  );
+};
 
-export const SearchField = ({ value, onChangeText, style }) => (
+export const SearchField = ({ value, onChangeText, style }) => {
+  const t = useT();
+  return (
   <View style={[styles.searchBox, style]}>
     <MIcon
       name={ICON_NAMES.SEARCH}
@@ -75,13 +80,15 @@ export const SearchField = ({ value, onChangeText, style }) => (
       value={value}
       onChangeText={onChangeText}
       style={styles.searchInput}
-      placeholder=""
+      placeholder={t('Որոնել')}
       returnKeyType="search"
     />
   </View>
-);
+  );
+};
 
 export const SegmentTabs = ({ tabs, active, onChange }) => {
+  const t = useT();
   const index = Math.max(
     0,
     tabs.findIndex(tab => tab.key === active),
@@ -99,7 +106,7 @@ export const SegmentTabs = ({ tabs, active, onChange }) => {
               activeOpacity={0.7}
             >
               <Text style={[styles.segmentLabel, on && styles.segmentLabelOn]}>
-                {tab.label}
+                {t(tab.label)}
               </Text>
               {tab.badge ? (
                 <View style={styles.countBubble}>
@@ -251,6 +258,7 @@ export const SheetAction = ({ icon, label, danger, onPress }) => (
 );
 
 export const SuccessModal = ({ visible, title, message, onClose }) => {
+  const t = useT();
   if (!visible) {
     return null;
   }
@@ -269,8 +277,8 @@ export const SuccessModal = ({ visible, title, message, onClose }) => {
             <CloseIcon />
           </TouchableOpacity>
           <CheckCircleIcon />
-          <Text style={styles.dialogTitle}>{title}</Text>
-          {message ? <Text style={styles.dialogBody}>{message}</Text> : null}
+          <Text style={styles.dialogTitle}>{t(title)}</Text>
+          {message ? <Text style={styles.dialogBody}>{t(message)}</Text> : null}
         </View>
       </View>
     </Modal>
@@ -302,51 +310,67 @@ const barFill = (value, color) => [
   { width: `${(value / 40) * 100}%`, backgroundColor: color },
 ];
 
-export const EmotionSheet = ({ visible, onClose, score = '2500' }) => (
+export const EmotionSheet = ({ visible, onClose, score = '', emotions }) => {
+  const t = useT();
+  const bars = (Array.isArray(emotions) ? emotions : []).filter(
+    item => item.value != null && item.value !== '',
+  );
+  return (
   <BottomSheet visible={visible} onClose={onClose}>
     <View style={styles.emotionHead}>
-      <View style={styles.emotionScore}>
-        <SparkleIcon />
-        <Text style={styles.emotionScoreText}>{score}</Text>
-      </View>
-      <Text style={styles.emotionTitle}>Էմոցիաներ</Text>
+      {score ? (
+        <View style={styles.emotionScore}>
+          <SparkleIcon />
+          <Text style={styles.emotionScoreText}>{score}</Text>
+        </View>
+      ) : null}
+      <Text style={styles.emotionTitle}>{t('Էմոցիաներ')}</Text>
     </View>
-    {EMOTION_BARS.map(bar => (
+    {bars.map(bar => (
       <View key={bar.id} style={styles.barRow}>
         <MIcon name={bar.icon} width={normalize(18)} height={normalize(18)} color={bar.color} />
         <View style={styles.barTrack}>
           <View style={barFill(bar.value, bar.color)} />
         </View>
-        <Text style={styles.barValue}>{bar.value}</Text>
+        <Text style={styles.barValue}>{bar.value ?? ''}</Text>
       </View>
     ))}
   </BottomSheet>
-);
+  );
+};
 
-export const PrimaryButton = ({ label, onPress, disabled, style }) => (
+export const PrimaryButton = ({ label, onPress, disabled, style }) => {
+  const t = useT();
+  return (
   <TouchableOpacity
     style={[styles.primary, disabled && styles.primaryDisabled, style]}
     onPress={onPress}
     disabled={disabled}
     activeOpacity={0.85}
   >
-    <Text style={[styles.primaryText, disabled && styles.primaryTextDisabled]}>{label}</Text>
+    <Text style={[styles.primaryText, disabled && styles.primaryTextDisabled]}>{t(label)}</Text>
   </TouchableOpacity>
-);
+  );
+};
 
-export const SettingRow = ({ icon, label, onPress, danger, labelStyle }) => (
+export const SettingRow = ({ icon, label, onPress, danger, labelStyle }) => {
+  const t = useT();
+  return (
   <TouchableOpacity style={styles.settingRow} onPress={onPress} activeOpacity={0.7}>
     <View style={styles.settingLeft}>
       {icon}
-      <Text style={[styles.settingLabel, danger && styles.danger, labelStyle]}>{label}</Text>
+      <Text style={[styles.settingLabel, danger && styles.danger, labelStyle]}>{t(label)}</Text>
     </View>
     {danger ? null : <ChevronRight />}
   </TouchableOpacity>
-);
+  );
+};
 
-export const ToggleRow = ({ label, value, onValueChange }) => (
+export const ToggleRow = ({ label, value, onValueChange }) => {
+  const t = useT();
+  return (
   <View style={styles.toggleRow}>
-    <Text style={styles.settingLabel}>{label}</Text>
+    <Text style={styles.settingLabel}>{t(label)}</Text>
     <Switch
       value={value}
       onValueChange={onValueChange}
@@ -354,7 +378,8 @@ export const ToggleRow = ({ label, value, onValueChange }) => (
       thumbColor="#FFFFFF"
     />
   </View>
-);
+  );
+};
 
 export const Field = ({
   label,
@@ -365,9 +390,11 @@ export const Field = ({
   secure,
   right,
   editable = true,
-}) => (
+}) => {
+  const t = useT();
+  return (
   <View style={styles.field}>
-    {label ? <Text style={styles.fieldLabel}>{label}</Text> : null}
+    {label ? <Text style={styles.fieldLabel}>{t(label)}</Text> : null}
     <TouchableOpacity
       activeOpacity={onPress ? 0.7 : 1}
       onPress={onPress}
@@ -388,4 +415,5 @@ export const Field = ({
       {right}
     </TouchableOpacity>
   </View>
-);
+  );
+};

@@ -3,23 +3,13 @@ import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styles from './styles';
 import MIcon from "../svgs";
 import {ICON_NAMES} from "../svgs/icon_names";
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+import { useT } from '../../locales/useT';
+
+const MONTHS = ['Հնվ', 'Փտր', 'Մրտ', 'Ապր', 'Մայ', 'Հնս', 'Հլս', 'Օգս', 'Սեպ', 'Հոկ', 'Նոյ', 'Դեկ'];
+const WEEKDAYS = ['Կի', 'Եր', 'Եք', 'Չր', 'Հն', 'Ուր', 'Շբ'];
 
 const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
+  const t = useT();
   const base = initialDate || new Date();
 
   const [viewMonth, setViewMonth] = useState(base.getMonth());
@@ -100,9 +90,9 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
           <View style={styles.handle} />
           <View style={styles.footerRow}>
             <TouchableOpacity onPress={handleClear}>
-              <Text style={styles.footerActionText}>Չեղարկել</Text>
+              <Text style={styles.footerActionText}>{t('Չեղարկել')}</Text>
             </TouchableOpacity>
-            <Text>Ընտրեք ամսաթիվը</Text>
+            <Text>{t('Ընտրեք ամսաթիվը')}</Text>
 
             <TouchableOpacity onPress={handleConfirm} disabled={!selectedDate}>
               <Text
@@ -111,7 +101,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
                   !selectedDate && styles.footerConfirmDisabled,
                 ]}
               >
-                Պահպանել
+                {t('Պահպանել')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -124,7 +114,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
                 setYearPickerOpen(false);
               }}
             >
-              <Text style={styles.dropdownText}>{MONTHS[viewMonth]}</Text>
+              <Text style={styles.dropdownText}>{t(MONTHS[viewMonth])}</Text>
               <MIcon name={ICON_NAMES.ARROWS.DOWN} />
             </TouchableOpacity>
 
@@ -151,7 +141,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
                     setMonthPickerOpen(false);
                   }}
                 >
-                  <Text style={styles.pickerItemText}>{m}</Text>
+                  <Text style={styles.pickerItemText}>{t(m)}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -179,7 +169,7 @@ const CalendarModal = ({ visible, onClose, onConfirm, initialDate }) => {
               <View style={styles.weekRow}>
                 {WEEKDAYS.map(w => (
                   <Text key={w} style={styles.weekdayText}>
-                    {w}
+                    {t(w)}
                   </Text>
                 ))}
               </View>

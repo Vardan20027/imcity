@@ -20,10 +20,9 @@ const OnboardingHeader = ({ currentStep, totalSteps = 5, onBack }) => {
             key={index}
             style={[
               styles.segment,
-              index < currentStep
+              index === currentStep - 1
                 ? styles.segmentActive
                 : styles.segmentInactive,
-              index !== totalSteps - 1 && styles.segmentSpacing,
             ]}
           />
         ))}

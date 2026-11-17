@@ -7,6 +7,7 @@ import { normalize } from '../../../../assets/deviceInfo/normalize';
 import { COLORS } from '../../../../assets/rootStyles';
 import { ROUT_NAMES } from '../../../../constants/rout';
 import { CITIES, FAQS, LANGUAGES, NOTIFICATION_TOGGLES, THREAD } from '../../profile/data';
+import { setLanguage } from '../../../../services/language';
 import {
   BellIcon,
   CheckCircleIcon,
@@ -15,12 +16,9 @@ import {
   GlobeIcon,
   HelpIcon,
   ImageAddIcon,
-  MicIcon,
   PencilIcon,
   PinIcon,
-  PlaySmallIcon,
   RadioMark,
-  SendIcon,
   TrashIcon,
   WarnCircleIcon,
 } from '../../profile/icons';
@@ -35,6 +33,7 @@ import {
   ToggleRow,
 } from '../../profile/parts';
 import styles from '../../profile/styles';
+import { ChatComposer, VoiceBubble } from '../../profile/voice';
 import { saveCreatedBusiness } from '../register/store';
 import { GALLERY } from '../register/data';
 import page from '../info/styles';
@@ -79,7 +78,6 @@ const HELP = [
 ];
 
 const CHAT = THREAD.filter(item => item.type !== 'image' && item.id !== 'd3');
-const BARS = [8, 14, 10, 18, 12, 16, 9, 14];
 
 const prefs = {
   city: 'Երևան',
@@ -98,8 +96,6 @@ const local = StyleSheet.create({
     borderRadius: normalize(10),
   },
 });
-
-const barLook = height => [styles.waveBar, { height: normalize(height) }];
 
 const leaveBusiness = navigation => {
   saveCreatedBusiness(null);
@@ -211,6 +207,7 @@ const LanguageScreen = ({ navigation }) => {
             onPress={() => {
               prefs.language = item.id;
               setSelected(item.id);
+              setLanguage(item.id);
             }}
           >
             <Text style={styles.selectLabel}>{item.label}</Text>
@@ -359,16 +356,17 @@ const SupportScreen = ({ navigation }) => {
   return (
     <Screen
       footer={
-        <View style={styles.composer}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            style={styles.composerInput}
-            placeholder="Հաղորդագրություն"
-            placeholderTextColor="#B2B2B2"
-          />
-          <TouchableOpacity onPress={send}>{text.trim() ? <SendIcon /> : <MicIcon />}</TouchableOpacity>
-        </View>
+        <ChatComposer
+          value={text}
+          onChangeText={setText}
+          onSend={send}
+          onVoice={note =>
+            setMessages(list => [
+              ...list,
+              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
+            ])
+          }
+        />
       }
     >
       <PageHeader title="Կապ մեզ հետ" onBack={() => navigation.goBack()} />
@@ -384,17 +382,14 @@ const SupportScreen = ({ navigation }) => {
           }
           if (item.type === 'voice') {
             return (
-              <View
+              <VoiceBubble
                 key={item.id}
-                style={[styles.bubbleWrap, item.mine ? styles.bubbleOut : styles.bubbleIn, styles.voice]}
-              >
-                <PlaySmallIcon />
-                <View style={styles.wave}>
-                  {BARS.map((height, index) => (
-                    <View key={`${item.id}-${index}`} style={barLook(height)} />
-                  ))}
-                </View>
-              </View>
+                id={item.id}
+                mine={item.mine}
+                duration={item.duration}
+                uri={item.uri}
+                bars={item.bars}
+              />
             );
           }
           const mine = item.type === 'out';

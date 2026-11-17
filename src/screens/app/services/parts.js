@@ -21,6 +21,7 @@ import {
 import { SparkleIcon } from '../business/icons';
 import { SERVICE_ICONS } from './iconXml';
 import styles from './styles';
+import { useT } from '../../../locales/useT';
 
 const CHIP_ICON_BOX = 16;
 const CHIP_ICON_NATIVE = {
@@ -70,7 +71,9 @@ export const EmotionMarks = ({ size = 12 }) => (
   </View>
 );
 
-export const SearchField = ({ value, onChangeText, style }) => (
+export const SearchField = ({ value, onChangeText, style }) => {
+  const t = useT();
+  return (
   <View style={[styles.searchBox, style]}>
     <MIcon
       name={ICON_NAMES.SEARCH}
@@ -82,12 +85,16 @@ export const SearchField = ({ value, onChangeText, style }) => (
       style={styles.searchInput}
       value={value}
       onChangeText={onChangeText}
+      placeholder={t('Որոնել')}
       returnKeyType="search"
     />
   </View>
-);
+  );
+};
 
-export const PageHeader = ({ title, onBack, bold }) => (
+export const PageHeader = ({ title, onBack, bold }) => {
+  const t = useT();
+  return (
   <View style={styles.pageHeader}>
     <TouchableOpacity
       style={styles.pageBack}
@@ -101,11 +108,14 @@ export const PageHeader = ({ title, onBack, bold }) => (
         height={normalize(20)}
       />
     </TouchableOpacity>
-    <Text style={[styles.pageTitle, bold && styles.pageTitleBold]}>{title}</Text>
+    <Text style={[styles.pageTitle, bold && styles.pageTitleBold]}>{t(title)}</Text>
   </View>
-);
+  );
+};
 
-const EmotionChip = memo(({ chip, selected, onToggle }) => (
+const EmotionChip = memo(({ chip, selected, onToggle }) => {
+  const t = useT();
+  return (
   <Pressable
     onPress={() => onToggle(chip.id)}
     style={({ pressed }) => [
@@ -128,10 +138,11 @@ const EmotionChip = memo(({ chip, selected, onToggle }) => (
         selected ? { color: chip.color } : styles.chipLabelIdle,
       ]}
     >
-      {chip.label}
+      {t(chip.label)}
     </Text>
   </Pressable>
-));
+  );
+});
 
 export const EmotionFilters = ({ selectedIds, onToggle }) => (
   <ScrollView
@@ -152,7 +163,7 @@ export const EmotionFilters = ({ selectedIds, onToggle }) => (
 );
 
 export const useEmotionFilter = () => {
-  const [selectedIds, setSelectedIds] = useState(() => new Set([2, 3, 5]));
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
   const toggle = id => {
     setSelectedIds(prev => {
       const next = new Set(prev);
@@ -164,13 +175,20 @@ export const useEmotionFilter = () => {
   return { selectedIds, toggle };
 };
 
-export const EmotionButton = ({ compact, count = '2640' }) => (
+export const EmotionButton = ({ compact, count }) => {
+  const t = useT();
+  return (
   <View style={[styles.emotionButton, compact && styles.emotionButtonCompact]}>
     <SparkleIcon dark />
-    {compact ? null : <Text style={styles.emotionLabel}>Էմոցիա</Text>}
-    <View style={styles.emotionDivider} />
-    <Text style={styles.emotionCount}>{count}</Text>
+    {compact ? null : <Text style={styles.emotionLabel}>{t('Էմոցիա')}</Text>}
+    {count ? (
+      <>
+        <View style={styles.emotionDivider} />
+        <Text style={styles.emotionCount}>{count}</Text>
+      </>
+    ) : null}
   </View>
-);
+  );
+};
 
 export const ShareButton = () => <ShareIcon />;

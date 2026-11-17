@@ -9,42 +9,25 @@ const styles = StyleSheet.create({
       color: COLORS.textPrimary,
       marginBottom: normalize(16),
     },
-    phoneRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      borderRadius: normalize(10),
-      marginBottom: normalize(32),
+    fieldBlock: {
+      marginBottom: normalize(16),
     },
-    codePrefix: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: normalize(13),
-      paddingHorizontal: normalize(12),
-      gap: normalize(6),
-    },
-    flag: {
-      width: normalize(20),
-      height: normalize(14),
-      resizeMode: 'cover',
-      borderRadius: normalize(2),
-    },
-    dialCode: {
-      fontSize: normalize(15),
-      color: COLORS.textPrimary,
-    },
-    separator: {
-      width: 1,
-      height: normalize(20),
-      backgroundColor: COLORS.border,
+    errorText: {
+      fontSize: normalize(13),
+      color: COLORS.pink,
+      marginBottom: normalize(6),
     },
     input: {
-      flex: 1,
+      borderWidth: 1,
+      borderColor: COLORS.border,
+      borderRadius: normalize(16),
       paddingHorizontal: normalize(16),
-      paddingVertical: normalize(13),
+      paddingVertical: normalize(14),
       fontSize: normalize(15),
       color: COLORS.textPrimary,
+    },
+    inputInvalid: {
+      borderColor: COLORS.pink,
     },
     dividerRow: {
       marginBottom: normalize(16),
@@ -75,6 +58,22 @@ const styles = StyleSheet.create({
       fontSize: normalize(15),
       fontWeight: '500',
       color: COLORS.textPrimary,
+    },
+    accountRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginBottom: normalize(16),
+    },
+    accountHint: {
+      fontSize: normalize(14),
+      color: COLORS.textSecondary,
+    },
+    signUpLabel: {
+      fontSize: normalize(14),
+      fontWeight: '600',
+      color: COLORS.primary,
     },
     forgotButton: {
       alignSelf: 'center',

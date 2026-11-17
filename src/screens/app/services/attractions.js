@@ -60,13 +60,7 @@ export const AttractionsScreen = () => {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const { selectedIds, toggle } = useEmotionFilter();
-  const items = useMemo(
-    () =>
-      ATTRACTIONS.filter(item =>
-        item.title.toLowerCase().includes(query.trim().toLowerCase()),
-      ),
-    [query],
-  );
+  const items = useMemo(() => [], []);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>

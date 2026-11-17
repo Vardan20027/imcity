@@ -60,7 +60,7 @@ const FavoriteCard = ({ item, onOpen, onRemove }) => (
 
 const FavoritesScreen = ({ navigation }) => {
   const [query, setQuery] = useState('');
-  const [items, setItems] = useState(FAVORITES);
+  const [items, setItems] = useState([]);
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) {

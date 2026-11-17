@@ -77,7 +77,7 @@ const EventsScreen = ({ navigation }) => (
   <SafeAreaView style={styles.screen} edges={['top']}>
     <PageHeader title="Միջոցառումներ" onBack={() => navigation.goBack()} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-      {EVENTS.map(item => (
+      {[].map(item => (
         <EventCard key={item.id} item={item} />
       ))}
     </ScrollView>

@@ -5,9 +5,12 @@ import Button from '../../../components/button';
 import LanguageOption from '../../../components/languageOption';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import styles from './styles';
+import { currentLanguage, setLanguage } from '../../../services/language';
+import { useT } from '../../../locales/useT';
 
 const LanguageSelectScreen = ({ navigation }) => {
-  const [selectedId, setSelectedId] = useState(LANGUAGES[0]?.id ?? null);
+  const t = useT();
+  const [selectedId, setSelectedId] = useState(currentLanguage());
 
   const handleContinue = () => {
     navigation.navigate('Login');
@@ -17,10 +20,10 @@ const LanguageSelectScreen = ({ navigation }) => {
     <AuthLayout>
       <View>
         <Text style={styles.title}>
-          Բարի գալուստ <Text style={styles.titleBrand}>IMCITY</Text>
+          {t('Բարի գալուստ')} <Text style={styles.titleBrand}>IMCITY</Text>
         </Text>
         <Text style={styles.subtitle}>
-          Բացահայտիր քաղաքը քո{'\n'} զգացողություններով
+          {t('Բացահայտիր քաղաքը քո զգացողություններով')}
         </Text>
       </View>
 
@@ -30,13 +33,16 @@ const LanguageSelectScreen = ({ navigation }) => {
             key={lang.id}
             label={lang.label}
             selected={lang.id === selectedId}
-            onPress={() => setSelectedId(lang.id)}
+            onPress={() => {
+              setSelectedId(lang.id);
+              setLanguage(lang.id);
+            }}
           />
         ))}
       </View>
 
       <Button
-        label="Շարունակել"
+        label={t('Շարունակել')}
         onPress={handleContinue}
         disabled={!selectedId}
       />

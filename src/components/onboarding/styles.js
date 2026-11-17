@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { normalize} from "../../assets/deviceInfo/normalize";
+import { COLORS } from '../../assets/rootStyles';
 
 const styles = StyleSheet.create({
     container: {
@@ -17,25 +18,24 @@ const styles = StyleSheet.create({
       left: 0
     },
     stepText: {
-      fontSize: normalize(15),
-      color: '#000',
+      fontSize: normalize(16),
+      fontWeight: '700',
+      color: '#686868',
     },
     progressRow: {
       flexDirection: 'row',
+      gap: normalize(8),
     },
     segment: {
       flex: 1,
       height: normalize(6),
-      borderRadius: normalize(3),
+      borderRadius: normalize(999),
     },
     segmentActive: {
-      backgroundColor: '#FF7A02',
+      backgroundColor: '#FF9721',
     },
     segmentInactive: {
-      backgroundColor: '#E5E5EA',
-    },
-    segmentSpacing: {
-      marginRight: normalize(6),
+      backgroundColor: COLORS.gray,
     },
   });
 

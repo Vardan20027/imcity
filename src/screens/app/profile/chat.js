@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Image,
@@ -18,34 +17,12 @@ import {
   BellOffIcon,
   BlockIcon,
   DotsIcon,
-  MicIcon,
-  PlaySmallIcon,
-  SendIcon,
   ShareIcon,
   TrashIcon,
 } from './icons';
 import { BottomSheet, SheetAction } from './parts';
+import { ChatComposer, VoiceBubble } from './voice';
 import styles from './styles';
-
-const bars = [8, 14, 10, 18, 12, 20, 9, 16, 11, 18, 8, 15, 12, 19, 10];
-
-const waveStyle = (height, mine) => [
-  styles.waveBar,
-  mine && styles.waveBarMine,
-  { height: normalize(height) },
-];
-
-const Voice = ({ mine, duration }) => (
-  <View style={[styles.bubbleWrap, mine ? styles.bubbleOut : styles.bubbleIn, styles.voice]}>
-    <PlaySmallIcon />
-    <View style={styles.wave}>
-      {bars.map((height, index) => (
-        <View key={`${height}-${index}`} style={waveStyle(height, mine)} />
-      ))}
-    </View>
-    <Text style={[styles.voiceTime, mine && styles.voiceTimeMine]}>{duration}</Text>
-  </View>
-);
 
 const ChatScreen = ({ navigation, route }) => {
   const user = route.params?.user || ANNA;
@@ -92,7 +69,16 @@ const ChatScreen = ({ navigation, route }) => {
               );
             }
             if (item.type === 'voice') {
-              return <Voice key={item.id} mine={item.mine} duration={item.duration} />;
+              return (
+                <VoiceBubble
+                  key={item.id}
+                  id={item.id}
+                  mine={item.mine}
+                  duration={item.duration}
+                  uri={item.uri}
+                  bars={item.bars}
+                />
+              );
             }
             if (item.type === 'image') {
               return (
@@ -107,18 +93,17 @@ const ChatScreen = ({ navigation, route }) => {
             );
           })}
         </ScrollView>
-        <View style={styles.composer}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            style={styles.composerInput}
-            placeholder="Հաղորդագրություն"
-            placeholderTextColor="#B2B2B2"
-          />
-          <TouchableOpacity onPress={send}>
-            {text.trim() ? <SendIcon /> : <MicIcon />}
-          </TouchableOpacity>
-        </View>
+        <ChatComposer
+          value={text}
+          onChangeText={setText}
+          onSend={send}
+          onVoice={note =>
+            setMessages(list => [
+              ...list,
+              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
+            ])
+          }
+        />
       </KeyboardAvoidingView>
       <BottomSheet visible={menu} onClose={() => setMenu(false)}>
         <SheetAction icon={<ShareIcon />} label="Կիսվել" onPress={() => setMenu(false)} />

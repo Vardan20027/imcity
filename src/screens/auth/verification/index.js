@@ -6,6 +6,7 @@ import Button from '../../../components/button';
 import styles from './styles';
 import OnboardingHeader from '../../../components/onboarding/header';
 import { useContainer } from './hook';
+import { useT } from '../../../locales/useT';
 
 const CODE_LENGTH = 6;
 const RESEND_COUNTDOWN = 59;
@@ -22,6 +23,7 @@ const OTPInput = ({ value, isFocused, onPress }) => (
 );
 
 const VerificationScreen = ({ navigation, route }) => {
+  const t = useT();
   const { handleVerifyAction, handleResendAction } = useContainer();
   const token = route?.params?.token;
   const [code, setCode] = useState('');
@@ -85,7 +87,7 @@ const VerificationScreen = ({ navigation, route }) => {
         caretHidden
       />
 
-      <Text style={styles.title}>Մուտքագրի՛ր կոդը</Text>
+      <Text style={styles.title}>{t('Մուտքագրի՛ր կոդը')}</Text>
 
       <View style={styles.otpRow}>
         {Array.from({ length: CODE_LENGTH }).map((_, i) => (
@@ -99,14 +101,14 @@ const VerificationScreen = ({ navigation, route }) => {
       </View>
 
       <View style={styles.resendRow}>
-        <Text style={styles.resendText}>Չե՞ս ստացել կոդը։ </Text>
+        <Text style={styles.resendText}>{t('Չե՞ս ստացել կոդը։ ')}</Text>
         <TouchableOpacity onPress={handleResend} disabled={!canResend || sending}>
           <Text
             style={[styles.resendLink, (!canResend || sending) && styles.resendLinkDisabled]}
           >
             {canResend
-              ? 'Կրկին ուղարկել'
-              : `Կրկին ուղարկել (00:${String(countdown).padStart(2, '0')})`}
+              ? t('Կրկին ուղարկել')
+              : `${t('Կրկին ուղարկել')} (00:${String(countdown).padStart(2, '0')})`}
           </Text>
         </TouchableOpacity>
       </View>

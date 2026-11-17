@@ -7,14 +7,15 @@ import am from './am';
 const resources = {
   en: { translation: en },
   am: { translation: am },
+  hy: { translation: am },
   ru: { translation: ru },
 };
 
 i18n.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   resources,
-  lng: 'am',
-  fallbackLng: 'am',
+  lng: 'hy',
+  fallbackLng: 'hy',
   interpolation: {
     escapeValue: false,
   },

@@ -14,6 +14,7 @@ import { CategoryListScreen, PlaceGridScreen } from './lists';
 import { useApiList } from '../../../state/reads/useList';
 import { getCategories, getCities } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
+import { useT } from '../../../locales/useT';
 import styles from './styles';
 
 const Stack = createNativeStackNavigator();
@@ -34,6 +35,7 @@ const CATEGORIES = [
 ];
 
 const ServicesHome = ({ navigation }) => {
+  const t = useT();
   const [city, setCity] = useState('Երևան');
   const [cityOpen, setCityOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -85,7 +87,7 @@ const ServicesHome = ({ navigation }) => {
           onPress={() => setCityOpen(v => !v)}
         >
           <MIcon name={ICON_NAMES.APP_LOGO} width={normalize(32)} height={normalize(32)} />
-          <Text style={styles.cityName}>{city}</Text>
+          <Text style={styles.cityName}>{t(city)}</Text>
           <MIcon
             name={ICON_NAMES.ARROWS.DOWN}
             width={normalize(16)}
@@ -116,10 +118,9 @@ const ServicesHome = ({ navigation }) => {
               <ServiceIcon name="attraction" size={24} />
             </View>
             <View style={styles.featuredText}>
-              <Text style={styles.featuredTitle}>Տեսարժան վայրեր</Text>
+              <Text style={styles.featuredTitle}>{t('Տեսարժան վայրեր')}</Text>
               <EmotionMarks size={16} />
             </View>
-            <Text style={styles.featuredCount}>148</Text>
           </TouchableOpacity>
         ) : null}
         <View style={styles.grid}>
@@ -136,13 +137,12 @@ const ServicesHome = ({ navigation }) => {
               <View style={styles.categoryBody}>
                 <View style={styles.categoryTitleRow}>
                   <Text style={styles.categoryTitle} numberOfLines={1}>
-                    {item.title}
+                    {t(item.title)}
                   </Text>
                   {item.chevron ? <ServiceIcon name="chevron" size={16} /> : null}
                 </View>
                 <EmotionMarks size={12} />
               </View>
-              <Text style={styles.categoryCount}>112</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -160,7 +160,7 @@ const ServicesHome = ({ navigation }) => {
                   setCityOpen(false);
                 }}
               >
-                <Text style={styles.cityOptionText}>{name}</Text>
+                <Text style={styles.cityOptionText}>{t(name)}</Text>
               </TouchableOpacity>
             ))}
           </View>

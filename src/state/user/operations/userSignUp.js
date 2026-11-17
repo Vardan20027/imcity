@@ -1,17 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import httpClient from '../../../services/HttpClient';
 import { signUpEndpoint } from '../endpoints';
+import { postUser } from './postUser';
 
-export const userSignUp = createAsyncThunk(
-  'user/userSignUp',
-  async (payload, { getState }) => {
-    try {
-      const { url } = signUpEndpoint;
-      const { data } = await httpClient.post(url, payload);
-      return data;
-    } catch (err) {
-      console.log('error', err);
-      //
-    }
-  },
-);
+export const userSignUp = createAsyncThunk('user/userSignUp', async (payload, { rejectWithValue }) => {
+  try {
+    return await postUser(signUpEndpoint.url, payload);
+  } catch (err) {
+    const data = err?.response?.data;
+    return rejectWithValue({
+      status: err?.response?.status,
+      data,
+      message: data?.message || err?.message,
+    });
+  }
+});

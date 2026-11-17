@@ -6,6 +6,7 @@ import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import AlertsIcon from '../../../components/svgs/alerts';
 import { normalize } from '../../../assets/deviceInfo/normalize';
+import { useT } from '../../../locales/useT';
 
 const ITEMS = [
   {
@@ -99,7 +100,8 @@ const UserCard = ({ item }) => (
 );
 
 const NotificationsScreen = ({ navigation }) => {
-  const [items, setItems] = useState(ITEMS);
+  const t = useT();
+  const [items, setItems] = useState([]);
   const remove = id => setItems(current => current.filter(item => item.id !== id));
 
   return (
@@ -113,16 +115,16 @@ const NotificationsScreen = ({ navigation }) => {
           style={styles.back}
           activeOpacity={0.7}
         />
-        <Text style={styles.title}>Ծանուցումներ</Text>
+        <Text style={styles.title}>{t('Ծանուցումներ')}</Text>
       </View>
 
       {items.length === 0 ? (
         <View style={styles.empty}>
           <AlertsIcon />
           <View style={styles.emptyCopy}>
-            <Text style={styles.emptyTitle}>Առայժմ ծանուցումներ չկան</Text>
+            <Text style={styles.emptyTitle}>{t('Առայժմ ծանուցումներ չկան')}</Text>
             <Text style={styles.emptyText}>
-              Երբ նոր ծանուցումներ ստանաք, դրանք կհայտնվեն այստեղ
+              {t('Երբ նոր ծանուցումներ ստանաք, դրանք կհայտնվեն այստեղ')}
             </Text>
           </View>
         </View>

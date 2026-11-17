@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { normalize } from '../../../assets/deviceInfo/normalize';
-import { MEMORIES } from './data';
 import { InfoIcon, PinIcon } from './icons';
+import { useProfile } from './data';
+import { useT } from '../../../locales/useT';
 import {
   CenterCard,
   EmotionMarks,
@@ -58,66 +59,88 @@ const ActivityLayout = ({
   infoTitle,
   infoBody,
   extra,
+  stats,
+  memories,
 }) => {
+  const t = useT();
   const [info, setInfo] = useState(false);
+  const hasStats = stats && [stats.fire, stats.leaf, stats.heart].some(value => value !== '' && value != null);
   return (
     <Screen scroll>
       <PageHeader title={title} onBack={() => navigation.goBack()} />
-      <View>
-        <Ring progress={progress} color={color} label={title} />
-        <TouchableOpacity style={styles.infoBtn} onPress={() => setInfo(true)}>
-          <InfoIcon />
-        </TouchableOpacity>
-      </View>
-      {extra}
-      <StatRow fire="1500" leaf="720" heart="500" />
-      <MemoryGrid
-        items={MEMORIES}
-        onPress={item => navigation.navigate(P.MEMORY, { memory: item })}
-      />
+      {progress > 0 ? (
+        <View>
+          <Ring progress={progress} color={color} label={t(title)} />
+          <TouchableOpacity style={styles.infoBtn} onPress={() => setInfo(true)}>
+            <InfoIcon />
+          </TouchableOpacity>
+        </View>
+      ) : null}
+      {progress > 0 ? extra : null}
+      {hasStats ? <StatRow fire={stats.fire} leaf={stats.leaf} heart={stats.heart} /> : null}
+      {memories?.length ? (
+        <MemoryGrid
+          items={memories}
+          onPress={item => navigation.navigate(P.MEMORY, { memory: item })}
+        />
+      ) : null}
       <CenterCard visible={info} onClose={() => setInfo(false)}>
-        <Text style={styles.infoTitle}>{infoTitle}</Text>
-        <Text style={styles.infoBody}>{infoBody}</Text>
+        <Text style={styles.infoTitle}>{t(infoTitle)}</Text>
+        <Text style={styles.infoBody}>{t(infoBody)}</Text>
       </CenterCard>
     </Screen>
   );
 };
 
-export const WeeklyScreen = ({ navigation }) => (
-  <ActivityLayout
-    navigation={navigation}
-    title="Շաբաթական ակտիվություն"
-    color="#FF8700"
-    progress={0.68}
-    infoTitle="Շաբաթական ակտիվություն"
-    infoBody="Ակտիվությունը հաշվարկվում է ձեր էմոցիաների, այցելությունների և հիշողությունների հիման վրա։ Որքան շատ եք ներգրավված քաղաքում, այնքան բարձր է ցուցանիշը։"
-    extra={
-      <TouchableOpacity
-        style={styles.goldLink}
-        onPress={() => navigation.navigate(P.GOLD)}
-      >
-        <Text style={styles.goldLinkText}>Gold կարգավիճակ</Text>
-      </TouchableOpacity>
-    }
-  />
-);
+const activityStats = user => ({ fire: user.fire, leaf: user.leaf, heart: user.heart });
 
-export const GoldScreen = ({ navigation }) => (
-  <ActivityLayout
-    navigation={navigation}
-    title="Gold կարգավիճակ"
-    color="#E0B000"
-    progress={0.82}
-    infoTitle="Gold կարգավիճակ"
-    infoBody="Gold կարգավիճակը բացվում է, երբ շաբաթական ակտիվությունը պահպանվում է բարձր մակարդակի վրա։ Այն տալիս է լրացուցիչ տեսանելիություն ձեր հիշողություններին։"
-  />
-);
+export const WeeklyScreen = ({ navigation }) => {
+  const t = useT();
+  const user = useProfile();
+  return (
+    <ActivityLayout
+      navigation={navigation}
+      title="Շաբաթական ակտիվություն"
+      color="#FF8700"
+      progress={Number(user.weekly) || 0}
+      infoTitle="Շաբաթական ակտիվություն"
+      infoBody="Ակտիվությունը հաշվարկվում է ձեր էմոցիաների, այցելությունների և հիշողությունների հիման վրա։ Որքան շատ եք ներգրավված քաղաքում, այնքան բարձր է ցուցանիշը։"
+      stats={activityStats(user)}
+      memories={user.memories}
+      extra={
+        <TouchableOpacity
+          style={styles.goldLink}
+          onPress={() => navigation.navigate(P.GOLD)}
+        >
+          <Text style={styles.goldLinkText}>{t('Gold կարգավիճակ')}</Text>
+        </TouchableOpacity>
+      }
+    />
+  );
+};
+
+export const GoldScreen = ({ navigation }) => {
+  const user = useProfile();
+  return (
+    <ActivityLayout
+      navigation={navigation}
+      title="Gold կարգավիճակ"
+      color="#E0B000"
+      progress={Number(user.gold) || 0}
+      infoTitle="Gold կարգավիճակ"
+      infoBody="Gold կարգավիճակը բացվում է, երբ շաբաթական ակտիվությունը պահպանվում է բարձր մակարդակի վրա։ Այն տալիս է լրացուցիչ տեսանելիություն ձեր հիշողություններին։"
+      stats={activityStats(user)}
+      memories={user.memories}
+    />
+  );
+};
 
 export const MemoryDetailScreen = ({ navigation, route }) => {
+  const t = useT();
   const memory = route.params?.memory;
   return (
     <Screen scroll edges={['top', 'bottom']}>
-      <PageHeader title={memory?.place || 'Հիշողություն'} onBack={() => navigation.goBack()} />
+      <PageHeader title={memory?.place || t('Հիշողություն')} onBack={() => navigation.goBack()} />
       {memory?.image ? (
         <Image source={memory.image} style={styles.detailHero} />
       ) : (
@@ -130,9 +153,7 @@ export const MemoryDetailScreen = ({ navigation, route }) => {
           <PinIcon size={14} color="#8E8C8C" />
           <Text style={styles.cityText}>{memory?.city}</Text>
         </View>
-        <Text style={styles.detailDesc}>
-          Հիանալի տեղ ընկերների հետ ժամանակ անցկացնելու համար։ Գեղեցիկ տեսարան և ջերմ մթնոլորտ։
-        </Text>
+        {memory?.description ? <Text style={styles.detailDesc}>{memory.description}</Text> : null}
       </View>
     </Screen>
   );

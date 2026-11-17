@@ -5,50 +5,63 @@ import { COLORS } from '../../../assets/rootStyles';
 const styles = StyleSheet.create({
     title: {
       fontSize: normalize(16),
-      fontWeight: '600',
-      color: COLORS.textPrimary,
-      marginBottom: normalize(16),
+      fontWeight: '700',
+      color: COLORS.black[50],
+      marginBottom: normalize(32),
     },
-    cityRow: {
+    field: {
+      height: normalize(56),
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: normalize(14),
-      paddingHorizontal: normalize(20),
+      justifyContent: 'space-between',
+      paddingHorizontal: normalize(16),
+      borderWidth: 1,
+      borderColor: '#898989',
+      borderRadius: normalize(16),
+      backgroundColor: COLORS.background,
+    },
+    fieldValue: {
+      fontSize: normalize(14),
+      fontWeight: '500',
+      color: COLORS.black[50],
+    },
+    fieldPlaceholder: {
+      fontSize: normalize(14),
+      fontWeight: '500',
+      color: '#7B7B7B',
+    },
+    chevronOpen: {
+      transform: [{ rotate: '180deg' }],
+    },
+    menu: {
+      marginTop: normalize(8),
       borderWidth: 1,
       borderColor: COLORS.border,
-      borderRadius: normalize(12),
+      borderRadius: normalize(16),
+      backgroundColor: COLORS.background,
+      overflow: 'hidden',
     },
-    cityRowSelected: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+    option: {
       paddingVertical: normalize(14),
-      paddingHorizontal: normalize(20),
-      borderWidth: 2,
-      borderColor: COLORS.primary,
+      paddingHorizontal: normalize(16),
+    },
+    optionSelected: {
       backgroundColor: '#FFF5E9',
-      borderRadius: normalize(12),
     },
-    cityLabel: {
-      fontSize: normalize(16),
-      fontWeight: '400',
-      color: COLORS.textPrimary,
-      textAlign: 'center',
+    optionDivider: {
+      borderBottomWidth: 1,
+      borderBottomColor: COLORS.border,
     },
-    cityLabelSelected: {
-      color: COLORS.accent,
+    optionLabel: {
+      fontSize: normalize(14),
       fontWeight: '500',
+      color: COLORS.black[50],
     },
-    checkmark: {
-      position: 'absolute',
-      left: normalize(20),
-      fontSize: normalize(16),
-      color: COLORS.accent,
-      fontWeight: '600',
+    optionLabelSelected: {
+      color: COLORS.primary,
     },
     button: {
-      marginTop: normalize(30),
+      marginTop: normalize(48),
     },
   });
 

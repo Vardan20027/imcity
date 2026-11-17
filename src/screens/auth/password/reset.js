@@ -6,10 +6,12 @@ import OnboardingHeader from '../../../components/onboarding/header';
 import { COLORS } from '../../../assets/rootStyles';
 import { useContainer } from './hook';
 import styles from './styles';
+import { useT } from '../../../locales/useT';
 
 const CODE_LENGTH = 6;
 
 const ResetPasswordScreen = ({ navigation, route }) => {
+  const t = useT();
   const { handleResetAction } = useContainer();
   const email = route?.params?.email;
   const token = route?.params?.token;
@@ -22,9 +24,9 @@ const ResetPasswordScreen = ({ navigation, route }) => {
   return (
     <AuthLayout showLogo={false}>
       <OnboardingHeader currentStep={1} totalSteps={5} onBack={() => navigation.goBack()} />
-      <Text style={styles.title}>Նոր գաղտնաբառ</Text>
-      <Text style={styles.hint}>Մուտքագրեք կոդը և նոր գաղտնաբառը</Text>
-      <Text style={styles.label}>Կոդ</Text>
+      <Text style={styles.title}>{t('Նոր գաղտնաբառ')}</Text>
+      <Text style={styles.hint}>{t('Մուտքագրեք կոդը և նոր գաղտնաբառը')}</Text>
+      <Text style={styles.label}>{t('Կոդ')}</Text>
       <TextInput
         style={styles.input}
         placeholder="000000"
@@ -34,19 +36,19 @@ const ResetPasswordScreen = ({ navigation, route }) => {
         value={code}
         onChangeText={value => setCode(value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
       />
-      <Text style={styles.label}>Նոր գաղտնաբառ</Text>
+      <Text style={styles.label}>{t('Նոր գաղտնաբառ')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Գաղտնաբառ"
+        placeholder={t('Գաղտնաբառ')}
         placeholderTextColor={COLORS.textSecondary}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      <Text style={styles.label}>Կրկնել գաղտնաբառը</Text>
+      <Text style={styles.label}>{t('Կրկնել գաղտնաբառը')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Գաղտնաբառ"
+        placeholder={t('Գաղտնաբառ')}
         placeholderTextColor={COLORS.textSecondary}
         secureTextEntry
         value={repeat}

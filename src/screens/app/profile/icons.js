@@ -338,6 +338,14 @@ export const PlaySmallIcon = () => (
   </I>
 );
 
+export const PauseSmallIcon = () => (
+  <I size={28}>
+    <Circle cx="12" cy="12" r="10" fill="#616161" />
+    <Rect x="8.5" y="8" width="2.2" height="8" rx="0.6" fill="white" />
+    <Rect x="13.3" y="8" width="2.2" height="8" rx="0.6" fill="white" />
+  </I>
+);
+
 export const InfoIcon = () => (
   <I size={18}>
     <Circle cx="12" cy="12" r="7" stroke="#8E8C8C" strokeWidth="1.6" />

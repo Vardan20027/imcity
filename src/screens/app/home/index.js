@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,8 @@ import { useApiList } from '../../../state/reads/useList';
 import { getCities } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
 import styles from './styles';
+import { useProfile } from '../profile/data';
+import { useT } from '../../../locales/useT';
 import {
   FavoriteIcon,
   FireIcon,
@@ -38,7 +40,6 @@ import {
 } from './icons';
 
 const CITIES = ['Երևան', 'Կապան', 'Գորիս', 'Գյումրի', 'Արարատ'];
-const DEFAULT_SELECTED = new Set([2, 3, 5]);
 const CHIP_ICON_BOX = 16;
 const CHIP_ICON_NATIVE = {
   [ICON_NAMES.EMOTIONS.CALM]: [19, 19],
@@ -275,6 +276,7 @@ const FEED = [
 ];
 
 function HomeHeader({ city, onToggleCity, onNotifications }) {
+  const t = useT();
   return (
     <View style={styles.header}>
       <TouchableOpacity
@@ -288,7 +290,7 @@ function HomeHeader({ city, onToggleCity, onNotifications }) {
           width={normalize(32)}
           height={normalize(32)}
         />
-        <Text style={styles.cityName}>{city}</Text>
+        <Text style={styles.cityName}>{t(city)}</Text>
         <MIcon
           name={ICON_NAMES.ARROWS.DOWN}
           width={normalize(16)}
@@ -307,6 +309,7 @@ function HomeHeader({ city, onToggleCity, onNotifications }) {
 }
 
 function HomeSearchBar({ value, onChangeText }) {
+  const t = useT();
   return (
     <View style={styles.searchBox}>
       <MIcon
@@ -320,14 +323,16 @@ function HomeSearchBar({ value, onChangeText }) {
         value={value}
         onChangeText={onChangeText}
         returnKeyType="search"
-        placeholder="Որոնել"
+        placeholder={t('Որոնել')}
         placeholderTextColor="#B2B2B2"
       />
     </View>
   );
 }
 
-const EmotionChip = memo(({ chip, selected, onToggle }) => (
+const EmotionChip = memo(({ chip, selected, onToggle }) => {
+  const t = useT();
+  return (
   <Pressable
     onPress={() => onToggle(chip.id)}
     unstable_pressDelay={0}
@@ -351,10 +356,11 @@ const EmotionChip = memo(({ chip, selected, onToggle }) => (
         selected ? { color: chip.color } : styles.chipLabelIdle,
       ]}
     >
-      {chip.label}
+      {t(chip.label)}
     </Text>
   </Pressable>
-));
+  );
+});
 
 const Categories = memo(({ selectedIds, onToggle }) => (
   <ScrollView
@@ -408,6 +414,7 @@ const Reactions = ({ reactors }) => (
 );
 
 function MediaOverlays({ item, showPills }) {
+  const t = useT();
   const [liked, setLiked] = useState(false);
   const [playing, setPlaying] = useState(false);
 
@@ -416,12 +423,12 @@ function MediaOverlays({ item, showPills }) {
       {showPills ? (
         <View style={styles.pillsRow}>
           <View style={styles.pill}>
-            <Text style={styles.pillText}>{item.date}</Text>
+            <Text style={styles.pillText}>{t(item.date)}</Text>
             <View style={styles.pillDivider} />
             <Text style={styles.pillText}>{item.time}</Text>
           </View>
           <View style={styles.pill}>
-            <Text style={styles.pillText}>{item.countdown}</Text>
+            <Text style={styles.pillText}>{t(item.countdown)}</Text>
           </View>
         </View>
       ) : null}
@@ -462,6 +469,7 @@ function MediaOverlays({ item, showPills }) {
 }
 
 const CountChip = ({ variant, label, count }) => {
+  const t = useT();
   const isJoin = variant === 'join';
   return (
     <View
@@ -483,7 +491,7 @@ const CountChip = ({ variant, label, count }) => {
               !isJoin && styles.countChipLabelEmotion,
             ]}
           >
-            {label}
+            {t(label)}
           </Text>
           <View style={styles.countChipDivider} />
         </View>
@@ -531,6 +539,7 @@ const ActionsRow = ({ item }) => {
 };
 
 const PostCard = memo(({ item }) => {
+  const t = useT();
   const navigation = useNavigation();
   const [open, setOpen] = useState(false);
   const openPoster = () => {
@@ -561,7 +570,7 @@ const PostCard = memo(({ item }) => {
             <Image source={item.logo} style={styles.authorAvatar} />
           </TouchableOpacity>
         )}
-        <Text style={styles.authorName}>{item.author}</Text>
+        <Text style={styles.authorName}>{t(item.author)}</Text>
       </View>
       <TouchableOpacity
         activeOpacity={0.8}
@@ -605,10 +614,10 @@ const PostCard = memo(({ item }) => {
             item.type === 'business' && styles.descriptionTight,
           ]}
         >
-          {item.description}
+          {t(item.description)}
         </Text>
         <TouchableOpacity onPress={() => setOpen(value => !value)}>
-          <Text style={styles.more}>{open ? 'փակել' : 'more'}</Text>
+          <Text style={styles.more}>{open ? t('փակել') : t('more')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -622,7 +631,7 @@ const PostCard = memo(({ item }) => {
                 item.locationBold && styles.locationTextBold,
               ]}
             >
-              {item.location}
+              {t(item.location)}
             </Text>
           </View>
           {item.price ? <Text style={styles.price}>{item.price}</Text> : null}
@@ -638,10 +647,18 @@ const PostSeparator = () => <View style={styles.postSeparator} />;
 const renderPost = ({ item }) => <PostCard item={item} />;
 
 const HomeScreen = ({ navigation }) => {
-  const [city, setCity] = useState('Երևան');
+  const t = useT();
+  const user = useProfile();
+  const [city, setCity] = useState(user.city || 'Երևան');
   const [cityOpen, setCityOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [selectedIds, setSelectedIds] = useState(() => new Set(DEFAULT_SELECTED));
+  const [selectedIds, setSelectedIds] = useState(
+    () => new Set((user.emotions || []).map(item => item.id)),
+  );
+  useEffect(() => {
+    if (!user.emotions?.length) return;
+    setSelectedIds(current => (current.size ? current : new Set(user.emotions.map(item => item.id))));
+  }, [user.emotions]);
   const remoteCities = useApiList(getCities);
   const cityNames = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
   const needle = query.trim().toLowerCase();
@@ -701,7 +718,7 @@ const HomeScreen = ({ navigation }) => {
       <Categories selectedIds={selectedIds} onToggle={toggleEmotion} />
       <FlatList
         data={feed}
-        ListEmptyComponent={<Text style={styles.more}>Արդյունք չկա</Text>}
+        ListEmptyComponent={<Text style={styles.more}>{t('Արդյունք չկա')}</Text>}
         keyExtractor={p => p.id}
         renderItem={renderPost}
         ItemSeparatorComponent={PostSeparator}
@@ -730,7 +747,7 @@ const HomeScreen = ({ navigation }) => {
                 ]}
                 onPress={() => selectCity(name)}
               >
-                <Text style={styles.cityOptionText}>{name}</Text>
+                <Text style={styles.cityOptionText}>{t(name)}</Text>
               </TouchableOpacity>
             ))}
           </View>

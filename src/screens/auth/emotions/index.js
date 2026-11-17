@@ -9,9 +9,12 @@ import { EMOTIONS } from '../../../constants/emotions/data';
 import { useApiList } from '../../../state/reads/useList';
 import { getEmotions } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
+import { setRegistration } from '../draft';
+import { useT } from '../../../locales/useT';
 
 
 const EmotionsScreen = ({ navigation }) => {
+  const t = useT();
   const [selectedIds, setSelectedIds] = useState([]);
   const remoteEmotions = useApiList(getEmotions);
   const emotions = remoteEmotions
@@ -27,6 +30,9 @@ const EmotionsScreen = ({ navigation }) => {
   const MAX = 3;
 
   const handleContinue = () => {
+    setRegistration({
+      emotions: emotions.filter(item => selectedIds.includes(item.id)),
+    });
     navigation.navigate('Information');
   };
   const toggleSelect = id => {
@@ -50,8 +56,8 @@ const EmotionsScreen = ({ navigation }) => {
         totalSteps={5}
         onBack={() => navigation.goBack()}
       />
-      <Text style={styles.title}>Ինչ ես ուզում զգալ</Text>
-      <Text style={styles.subtitle}>Մինչև 3 տարբերակ</Text>
+      <Text style={styles.title}>{t('Ինչ ես ուզում զգալ')}</Text>
+      <Text style={styles.subtitle}>{t('Մինչև 3 տարբերակ')}</Text>
 
       <View style={styles.container}>
         {emotions.map(item => {
@@ -70,13 +76,13 @@ const EmotionsScreen = ({ navigation }) => {
             >
               <MIcon name={item.icon} color={isSelected && item.color} />
               <Text style={[styles.text, isSelected && { color: item.color }]}>
-                {item.title}
+                {t(item.title)}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
-      <Text style={styles.subtitle}>Կարող եք փոխել ցանկացած ժամանակ!</Text>
+      <Text style={styles.subtitle}>{t('Կարող եք փոխել ցանկացած ժամանակ!')}</Text>
       <Button
         label="Շարունակել"
         onPress={handleContinue}
@@ -85,7 +91,7 @@ const EmotionsScreen = ({ navigation }) => {
       />
 
       <TouchableOpacity style={{ alignSelf: 'center' }}>
-        <Text>Բաց թողնել</Text>
+        <Text>{t('Բաց թողնել')}</Text>
       </TouchableOpacity>
     </AuthLayout>
   );

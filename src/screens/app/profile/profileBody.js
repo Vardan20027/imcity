@@ -17,6 +17,8 @@ import {
 import { EmotionSheet, MemoryGrid, Screen, StatRow } from './parts';
 import { P } from './routes';
 import styles from './styles';
+import { formatBirthday } from '../../../utils/birthday';
+import { useT } from '../../../locales/useT';
 
 const progressWidth = value => [styles.progressFill, { width: `${value * 100}%` }];
 
@@ -27,7 +29,10 @@ const Pill = ({ style, onPress, children }) => (
 );
 
 const ProfileBody = ({ user, isOwn, navigation, onMenu, onAdd, added }) => {
+  const t = useT();
   const [emotions, setEmotions] = useState(false);
+  const memories = isOwn ? user.memories || [] : MEMORIES;
+  const hasStats = [user.fire, user.leaf, user.heart].some(value => value !== '' && value != null);
 
   return (
     <Screen scroll>
@@ -83,20 +88,22 @@ const ProfileBody = ({ user, isOwn, navigation, onMenu, onAdd, added }) => {
           </View>
           <Pill style={styles.pillLeft} onPress={() => setEmotions(true)}>
             <SparkleIcon size={14} />
-            <Text style={styles.pillText}>{user.score}</Text>
+            {user.score ? <Text style={styles.pillText}>{user.score}</Text> : null}
           </Pill>
           <Pill
             style={styles.pillChat}
             onPress={() => navigation.navigate(isOwn ? P.MESSAGES : P.CHAT, { user })}
           >
             <ChatBubbleIcon />
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{user.unreadChats}</Text>
-            </View>
+            {user.unreadChats ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{user.unreadChats}</Text>
+              </View>
+            ) : null}
           </Pill>
           <Pill style={styles.pillPeople} onPress={() => navigation.navigate(P.CONTACTS)}>
             <PeopleIcon />
-            <Text style={styles.pillText}>{user.contacts}</Text>
+            {user.contacts ? <Text style={styles.pillText}>{user.contacts}</Text> : null}
           </Pill>
           {!isOwn ? (
             <Pill style={styles.pillAdd} onPress={onAdd}>
@@ -104,19 +111,20 @@ const ProfileBody = ({ user, isOwn, navigation, onMenu, onAdd, added }) => {
             </Pill>
           ) : null}
         </View>
-        {!isOwn ? (
+        {user.city ? (
           <View style={styles.cityRow}>
             <PinIcon size={14} color="#8E8C8C" />
-            <Text style={styles.cityText}>{user.city}</Text>
+            <Text style={styles.cityText}>{t(user.city)}</Text>
           </View>
         ) : null}
-        {isOwn ? (
+        {user.birthday ? <Text style={styles.birthdayText}>{formatBirthday(user.birthday)}</Text> : null}
+        {isOwn && Number(user.weekly) > 0 ? (
           <TouchableOpacity
             style={styles.progressCard}
             activeOpacity={0.85}
             onPress={() => navigation.navigate(P.ACTIVITY)}
           >
-            <Text style={styles.progressLabel}>Շաբաթական ակտիվություն</Text>
+            <Text style={styles.progressLabel}>{t('Շաբաթական ակտիվություն')}</Text>
             <View style={styles.progressTrack}>
               <View style={progressWidth(user.weekly)}>
                 <Text style={styles.progressValue}>{Math.round(user.weekly * 100)}%</Text>
@@ -126,14 +134,17 @@ const ProfileBody = ({ user, isOwn, navigation, onMenu, onAdd, added }) => {
         ) : null}
       </View>
 
-      <StatRow fire={user.fire} leaf={user.leaf} heart={user.heart} />
-      <MemoryGrid
-        items={MEMORIES}
-        onPress={item => navigation.navigate(P.MEMORY, { memory: item, user })}
-      />
+      {hasStats ? <StatRow fire={user.fire} leaf={user.leaf} heart={user.heart} /> : null}
+      {memories.length ? (
+        <MemoryGrid
+          items={memories}
+          onPress={item => navigation.navigate(P.MEMORY, { memory: item, user })}
+        />
+      ) : null}
       <EmotionSheet
         visible={emotions}
         score={String(user.score).replace(',', '')}
+        emotions={user.emotions}
         onClose={() => setEmotions(false)}
       />
       {added}

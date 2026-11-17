@@ -188,6 +188,12 @@ const styles = StyleSheet.create({
     fontSize: normalize(12),
     color: '#8E8C8C',
   },
+  birthdayText: {
+    marginTop: normalize(4),
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(12),
+    color: '#8E8C8C',
+  },
 
   progressCard: {
     width: normalize(328),
@@ -1183,6 +1189,12 @@ const styles = StyleSheet.create({
   waveBarMine: {
     backgroundColor: 'rgba(255,255,255,0.85)',
   },
+  waveBarPlayed: {
+    backgroundColor: '#FF8700',
+  },
+  waveBarPlayedMine: {
+    backgroundColor: '#FFFFFF',
+  },
   voiceTimeMine: {
     color: '#FFFFFF',
   },
@@ -1264,6 +1276,25 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.arm.regular,
     fontSize: normalize(14),
     color: COLORS.black[50],
+  },
+  composerSide: {
+    width: normalize(32),
+    height: normalize(32),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recordDot: {
+    width: normalize(8),
+    height: normalize(8),
+    borderRadius: normalize(4),
+    backgroundColor: '#F4466E',
+    marginRight: normalize(8),
+  },
+  recordTime: {
+    flex: 1,
+    fontFamily: Fonts.arm.medium,
+    fontSize: normalize(14),
+    color: '#F4466E',
   },
   chatHeaderUser: {
     flex: 1,

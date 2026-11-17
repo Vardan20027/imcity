@@ -1,4 +1,6 @@
 import { baseUrl } from '../../constants/url';
+import { EMOTIONS } from '../../constants/emotions/data';
+import { formatBirthday } from '../../utils/birthday';
 
 const LIST_KEYS = ['data', 'items', 'results', 'places', 'categories', 'emotions', 'cities', 'gallery', 'images', 'working_times'];
 
@@ -59,6 +61,21 @@ const GENDER_LABEL = {
   other: 'Չնշել',
 };
 
+const mapEmotions = list => {
+  if (!Array.isArray(list)) return undefined;
+  return list.map((item, index) => {
+    const title = nameOf(item);
+    const style = EMOTIONS.find(emotion => emotion.id === item?.id || emotion.title === title)
+      || EMOTIONS[index % EMOTIONS.length];
+    return {
+      ...style,
+      id: item?.id ?? style?.id ?? index,
+      title: title || style?.title,
+      value: item?.value ?? item?.score,
+    };
+  });
+};
+
 export const mapCurrentUser = payload => {
   const user = recordOf(payload);
   if (!user) return {};
@@ -67,6 +84,7 @@ export const mapCurrentUser = payload => {
   const handle = user.username || user.handle;
   const city = user.city?.name || (typeof user.city === 'string' ? user.city : '');
   const avatar = user.avatar || user.image || user.profile_image;
+  const emotions = mapEmotions(user.emotions);
   return filled({
     name: [first, last].filter(Boolean).join(' '),
     handle: handle ? (String(handle).startsWith('@') ? handle : `@${handle}`) : '',
@@ -74,9 +92,18 @@ export const mapCurrentUser = payload => {
     phone: user.phone || user.phone_number,
     city,
     gender: GENDER_LABEL[user.gender] || (typeof user.gender === 'string' ? user.gender : ''),
-    birthday: user.birthday || user.birthdate,
+    birthday: formatBirthday(user.birthday || user.birthdate || user.birth_date || user.date_of_birth),
     avatar: typeof avatar === 'string' ? remoteImage(avatar) : null,
     placeId: user.place_id || user.place?.id,
+    score: user.score ?? user.coins,
+    contacts: user.contacts_count ?? user.contacts,
+    unreadChats: user.unread_chats ?? user.unreadChats,
+    weekly: user.weekly_activity ?? user.weekly,
+    fire: user.fire,
+    leaf: user.leaf,
+    heart: user.heart,
+    emotions,
+    memories: Array.isArray(user.memories) ? user.memories : undefined,
   });
 };
 

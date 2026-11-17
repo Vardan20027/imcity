@@ -25,33 +25,44 @@ const mem = [
   require('../../../assets/images/services/mem-9.jpg'),
 ];
 
-export const ME = {
-  id: 'me',
-  name: 'Անի Եսայան',
-  handle: '@ani_yesayan',
-  avatar: ani,
-  city: 'Կապան',
-  gender: 'Իգական',
-  birthday: '15.05.1994',
-  email: 'ani@imcity.am',
-  phone: '+374 91 000 000',
-  score: '2,500',
-  contacts: 120,
-  unreadChats: 3,
-  weekly: 0.68,
-  fire: '1500',
-  leaf: '720',
-  heart: '500',
+export const EMPTY_PROFILE = {
+  id: '',
+  name: '',
+  handle: '',
+  avatar: null,
+  city: '',
+  gender: '',
+  birthday: '',
+  email: '',
+  phone: '',
+  score: '',
+  contacts: 0,
+  unreadChats: 0,
+  weekly: 0,
+  fire: '',
+  leaf: '',
+  heart: '',
+  emotions: [],
+  memories: [],
 };
 
-let profile = { ...ME };
+let profile = { ...EMPTY_PROFILE };
 const listeners = new Set();
+
+const publish = () => {
+  listeners.forEach(listener => listener(profile));
+};
 
 export const getProfile = () => profile;
 
 export const updateProfile = patch => {
   profile = { ...profile, ...patch };
-  listeners.forEach(listener => listener(profile));
+  publish();
+};
+
+export const replaceProfile = next => {
+  profile = { ...EMPTY_PROFILE, ...next };
+  publish();
 };
 
 export const useProfile = () => {

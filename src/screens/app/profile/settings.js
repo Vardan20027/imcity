@@ -8,6 +8,7 @@ import { EMOTIONS } from '../../../constants/emotions/data';
 import { ROUT_NAMES } from '../../../constants/rout';
 import { useCreatedBusiness } from '../business/register/store';
 import CalendarModal from '../../../components/calendar/calendarModal';
+import { signOut } from '../../../services/api/auth';
 import {
   BUSINESSES,
   CITIES,
@@ -41,9 +42,6 @@ import {
   WarnCircleIcon,
   CameraIcon,
   CheckCircleIcon,
-  MicIcon,
-  PlaySmallIcon,
-  SendIcon,
 } from './icons';
 import {
   BottomSheet,
@@ -58,7 +56,11 @@ import {
   ToggleRow,
 } from './parts';
 import { P } from './routes';
+import { ChatComposer, VoiceBubble } from './voice';
 import { useContainer } from './hook';
+import { birthdayForApi, formatBirthday, parseBirthday } from '../../../utils/birthday';
+import { currentLanguage, setLanguage } from '../../../services/language';
+import { useT } from '../../../locales/useT';
 import { useApiList } from '../../../state/reads/useList';
 import { getCities, getEmotions } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
@@ -75,7 +77,7 @@ const profilePayload = ({ name, handle, birthday, gender, city }) => {
     first_name: parts[0] || '',
     last_name: parts.slice(1).join(' '),
     username: handle.trim().replace(/^@/, ''),
-    birthday,
+    birthday: birthdayForApi(birthday),
     gender: GENDER_TO_API[gender] || gender,
     city,
   };
@@ -88,8 +90,6 @@ const cardLook = (on, backgroundColor) => [
 ];
 
 const labelLook = (on, color) => [styles.emotionCardLabel, on && { color }];
-
-const barLook = height => [styles.waveBar, { height: normalize(height) }];
 
 const formatDate = date => {
   const dd = String(date.getDate()).padStart(2, '0');
@@ -176,7 +176,7 @@ export const SettingsScreen = ({ navigation }) => {
           icon={<LogoutIcon />}
           label="Դուրս գալ"
           danger
-          onPress={() => navigation.popToTop()}
+          onPress={signOut}
         />
       </View>
       <BottomSheet
@@ -206,6 +206,7 @@ export const SettingsScreen = ({ navigation }) => {
 };
 
 export const EditProfileScreen = ({ navigation }) => {
+  const t = useT();
   const { handleUpdateProfile, handleUpdateProfileImage } = useContainer();
   const user = useProfile();
   const [saving, setSaving] = useState(false);
@@ -219,7 +220,7 @@ export const EditProfileScreen = ({ navigation }) => {
   const [cityOpen, setCityOpen] = useState(false);
   const [calendar, setCalendar] = useState(false);
   const [cityQuery, setCityQuery] = useState('');
-  const cities = CITIES.filter(item => item.toLowerCase().includes(cityQuery.trim().toLowerCase()));
+  const cities = CITIES.filter(item => t(item).toLowerCase().includes(cityQuery.trim().toLowerCase()));
 
   const saveProfile = async () => {
     if (saving) return;
@@ -282,19 +283,19 @@ export const EditProfileScreen = ({ navigation }) => {
         <Field label="Օգտագործողի անուն" value={handle} onChangeText={setHandle} />
         <Field
           label="Ծննդյան ամսաթիվ"
-          value={birthday}
+          value={formatBirthday(birthday)}
           onPress={() => setCalendar(true)}
           icon={<MIcon name={ICON_NAMES.CALENDAR} width={normalize(18)} height={normalize(18)} />}
         />
-        <Field label="Սեռ" value={gender} onPress={() => setGenderOpen(true)} icon={<ChevronRight />} />
+        <Field label="Սեռ" value={t(gender)} onPress={() => setGenderOpen(true)} icon={<ChevronRight />} />
         <Field label="Քաղաք" value={city} onPress={() => setCityOpen(true)} icon={<ChevronRight />} />
       </View>
       <CenterCard visible={photoOpen} onClose={() => setPhotoOpen(false)}>
         <TouchableOpacity style={styles.optionRow} onPress={() => uploadPhoto(launchCamera)}>
-          <Text style={styles.optionText}>Լուսանկարել</Text>
+          <Text style={styles.optionText}>{t('Լուսանկարել')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionRow} onPress={() => uploadPhoto(launchImageLibrary)}>
-          <Text style={styles.optionText}>Ընտրել պատկերասրահից</Text>
+          <Text style={styles.optionText}>{t('Ընտրել պատկերասրահից')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.optionRow}
@@ -303,7 +304,7 @@ export const EditProfileScreen = ({ navigation }) => {
             setPhotoOpen(false);
           }}
         >
-          <Text style={[styles.optionText, styles.danger]}>Ջնջել լուսանկարը</Text>
+          <Text style={[styles.optionText, styles.danger]}>{t('Ջնջել լուսանկարը')}</Text>
         </TouchableOpacity>
       </CenterCard>
       <BottomSheet visible={genderOpen} onClose={() => setGenderOpen(false)}>
@@ -316,7 +317,7 @@ export const EditProfileScreen = ({ navigation }) => {
               setGenderOpen(false);
             }}
           >
-            <Text style={styles.optionText}>{item}</Text>
+            <Text style={styles.optionText}>{t(item)}</Text>
             <RadioMark selected={gender === item} />
           </TouchableOpacity>
         ))}
@@ -342,7 +343,7 @@ export const EditProfileScreen = ({ navigation }) => {
                 setCityOpen(false);
               }}
             >
-              <Text style={styles.optionText}>{item}</Text>
+              <Text style={styles.optionText}>{t(item)}</Text>
               {city === item ? (
                 <MIcon name={ICON_NAMES.CHECKMARK} width={normalize(18)} height={normalize(18)} />
               ) : null}
@@ -352,7 +353,7 @@ export const EditProfileScreen = ({ navigation }) => {
       </BottomSheet>
       <CalendarModal
         visible={calendar}
-        initialDate={new Date(1994, 4, 15)}
+        initialDate={parseBirthday(birthday)}
         onClose={() => setCalendar(false)}
         onConfirm={date => {
           setBirthday(formatDate(date));
@@ -364,12 +365,13 @@ export const EditProfileScreen = ({ navigation }) => {
 };
 
 export const CityScreen = ({ navigation }) => {
+  const t = useT();
   const user = useProfile();
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(user.city);
   const remoteCities = useApiList(getCities);
   const source = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
-  const cities = source.filter(item => item.toLowerCase().includes(query.trim().toLowerCase()));
+  const cities = source.filter(item => t(item).toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Screen scroll>
       <PageHeader title="Քաղաք" onBack={() => navigation.goBack()} />
@@ -384,7 +386,7 @@ export const CityScreen = ({ navigation }) => {
               updateProfile({ city: item });
             }}
           >
-            <Text style={styles.selectLabel}>{item}</Text>
+            <Text style={styles.selectLabel}>{t(item)}</Text>
             {selected === item ? (
               <MIcon name={ICON_NAMES.CHECKMARK} width={normalize(18)} height={normalize(18)} />
             ) : (
@@ -398,7 +400,7 @@ export const CityScreen = ({ navigation }) => {
 };
 
 export const LanguageScreen = ({ navigation }) => {
-  const [selected, setSelected] = useState('hy');
+  const [selected, setSelected] = useState(currentLanguage());
   return (
     <Screen scroll>
       <PageHeader title="Լեզու" onBack={() => navigation.goBack()} />
@@ -407,7 +409,10 @@ export const LanguageScreen = ({ navigation }) => {
           <TouchableOpacity
             key={item.id}
             style={styles.selectRow}
-            onPress={() => setSelected(item.id)}
+            onPress={() => {
+              setSelected(item.id);
+              setLanguage(item.id);
+            }}
           >
             <Text style={styles.selectLabel}>{item.label}</Text>
             <RadioMark selected={selected === item.id} />
@@ -419,6 +424,8 @@ export const LanguageScreen = ({ navigation }) => {
 };
 
 export const EmotionsScreen = ({ navigation }) => {
+  const t = useT();
+  const user = useProfile();
   const remoteEmotions = useApiList(getEmotions);
   const emotions = remoteEmotions
     ? remoteEmotions.map((item, index) => {
@@ -430,7 +437,10 @@ export const EmotionsScreen = ({ navigation }) => {
         };
       })
     : EMOTIONS;
-  const [selected, setSelected] = useState(() => new Set([2, 3, 5]));
+  const [selected, setSelected] = useState(() => {
+    const saved = (user.emotions || []).map(item => item.id);
+    return new Set(saved);
+  });
   const toggle = id => {
     setSelected(prev => {
       const next = new Set(prev);
@@ -457,7 +467,7 @@ export const EmotionsScreen = ({ navigation }) => {
     >
       <PageHeader title="Էմոցիաներ" onBack={() => navigation.goBack()} />
       <View style={styles.form}>
-        <Text style={styles.hint}>Ընտրեք մինչև 3 էմոցիա, որոնք ցանկանում եք զգալ</Text>
+        <Text style={styles.hint}>{t('Ընտրեք մինչև 3 էմոցիա, որոնք ցանկանում եք զգալ')}</Text>
         <View style={styles.emotionGrid}>
           {emotions.map(item => {
             const on = selected.has(item.id);
@@ -475,7 +485,7 @@ export const EmotionsScreen = ({ navigation }) => {
                   color={on ? item.color : '#7B7B7B'}
                 />
                 <Text style={labelLook(on, item.color)}>
-                  {item.title.replace('\n', '')}
+                  {t(item.title).replace('\n', '')}
                 </Text>
               </TouchableOpacity>
             );
@@ -537,17 +547,20 @@ export const SecurityScreen = ({ navigation }) => (
   </Screen>
 );
 
-const Rule = ({ ok, label }) => (
-  <View style={styles.ruleRow}>
-    <MIcon
-      name={ICON_NAMES.CHECKMARK}
-      width={normalize(16)}
-      height={normalize(16)}
-      color={ok ? '#12B900' : '#C8C8C8'}
-    />
-    <Text style={[styles.ruleText, ok && styles.ruleTextOn]}>{label}</Text>
-  </View>
-);
+const Rule = ({ ok, label }) => {
+  const t = useT();
+  return (
+    <View style={styles.ruleRow}>
+      <MIcon
+        name={ICON_NAMES.CHECKMARK}
+        width={normalize(16)}
+        height={normalize(16)}
+        color={ok ? '#12B900' : '#C8C8C8'}
+      />
+      <Text style={[styles.ruleText, ok && styles.ruleTextOn]}>{t(label)}</Text>
+    </View>
+  );
+};
 
 export const ChangePasswordScreen = ({ navigation }) => {
   const { handleChangePassword } = useContainer();
@@ -609,6 +622,7 @@ export const ChangePasswordScreen = ({ navigation }) => {
 };
 
 export const TwoFactorScreen = ({ navigation }) => {
+  const t = useT();
   const [enabled, setEnabled] = useState(false);
   return (
     <Screen scroll>
@@ -626,7 +640,7 @@ export const TwoFactorScreen = ({ navigation }) => {
           }}
         />
         <Text style={[styles.bodyText, styles.blockTopLg]}>
-          Միացրեք 2FA-ն ձեր հաշվի ապահովության համար: Սա կպահանջի հաստատման կոդ մուտք գործելիս:
+          {t('Միացրեք 2FA-ն ձեր հաշվի ապահովության համար: Սա կպահանջի հաստատման կոդ մուտք գործելիս:')}
         </Text>
       </View>
     </Screen>
@@ -634,6 +648,7 @@ export const TwoFactorScreen = ({ navigation }) => {
 };
 
 export const ConfirmMethodScreen = ({ navigation }) => {
+  const t = useT();
   const [method, setMethod] = useState('sms');
   const [done, setDone] = useState(false);
   const options = [
@@ -652,7 +667,7 @@ export const ConfirmMethodScreen = ({ navigation }) => {
       <PageHeader title="Ընտրել հաստատման տարբերակ" onBack={() => navigation.goBack()} />
       <View style={styles.headerLine} />
       <View style={styles.form}>
-        <Text style={styles.bodyText}>Ընտրեք, թե ինչպես եք ցանկանում ստանալ հաստատման կոդը:</Text>
+        <Text style={styles.bodyText}>{t('Ընտրեք, թե ինչպես եք ցանկանում ստանալ հաստատման կոդը:')}</Text>
         <View style={styles.blockTopLg}>
           {options.map(item => {
             const on = method === item.id;
@@ -664,8 +679,8 @@ export const ConfirmMethodScreen = ({ navigation }) => {
               >
                 <RadioMark selected={on} />
                 <View>
-                  <Text style={styles.methodTitle}>{item.title}</Text>
-                  <Text style={styles.methodSub}>{item.sub}</Text>
+                  <Text style={styles.methodTitle}>{t(item.title)}</Text>
+                  <Text style={styles.methodSub}>{t(item.sub)}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -833,7 +848,9 @@ export const PhoneCodeScreen = ({ navigation, route }) => {
   );
 };
 
-export const DeleteAccountScreen = ({ navigation }) => (
+export const DeleteAccountScreen = ({ navigation }) => {
+  const t = useT();
+  return (
   <Screen
     scroll
     footer={
@@ -845,13 +862,14 @@ export const DeleteAccountScreen = ({ navigation }) => (
     <PageHeader title="Ջնջել հաշիվը" onBack={() => navigation.goBack()} />
     <View style={styles.centerBlock}>
       <WarnCircleIcon />
-      <Text style={styles.centerTitle}>Դուք պատրաստվում եք ջնջել ձեր հաշիվը</Text>
+      <Text style={styles.centerTitle}>{t('Դուք պատրաստվում եք ջնջել ձեր հաշիվը')}</Text>
       <Text style={styles.centerBody}>
-        30 օրվա ընթացքում ակտիվության բացակայության դեպքում ձեր հաշիվը կջնջվի մշտապես
+        {t('30 օրվա ընթացքում ակտիվության բացակայության դեպքում ձեր հաշիվը կջնջվի մշտապես')}
       </Text>
     </View>
   </Screen>
-);
+  );
+};
 
 export const DeletePasswordScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
@@ -889,7 +907,9 @@ export const DeletePasswordScreen = ({ navigation }) => {
   );
 };
 
-export const DeleteFinalScreen = ({ navigation }) => (
+export const DeleteFinalScreen = ({ navigation }) => {
+  const t = useT();
+  return (
   <Screen
     scroll
     footer={
@@ -902,13 +922,16 @@ export const DeleteFinalScreen = ({ navigation }) => (
     <View style={styles.headerLine} />
     <View style={styles.form}>
       <Text style={styles.bodyText}>
-        Վստահ եք, որ ցանկանում եք ջնջել հաշիվը? Ձեր տվյալները հնարավոր չի լինի վերականգնել:
+        {t('Վստահ եք, որ ցանկանում եք ջնջել հաշիվը? Ձեր տվյալները հնարավոր չի լինի վերականգնել:')}
       </Text>
     </View>
   </Screen>
-);
+  );
+};
 
-export const DeleteDoneScreen = ({ navigation }) => (
+export const DeleteDoneScreen = ({ navigation }) => {
+  const t = useT();
+  return (
   <Screen
     scroll
     footer={
@@ -921,10 +944,11 @@ export const DeleteDoneScreen = ({ navigation }) => (
       <View style={styles.headerLine} />
       <View style={styles.centerBlock}>
         <CheckCircleIcon />
-        <Text style={styles.centerTitle}>Ձեր հաշիվը հաջողությամբ ջնջվեց</Text>
+        <Text style={styles.centerTitle}>{t('Ձեր հաշիվը հաջողությամբ ջնջվեց')}</Text>
       </View>
     </Screen>
-);
+  );
+};
 
 const HELP = [
   {
@@ -947,7 +971,9 @@ const HELP = [
   },
 ];
 
-export const HelpScreen = ({ navigation }) => (
+export const HelpScreen = ({ navigation }) => {
+  const t = useT();
+  return (
   <Screen scroll>
     <PageHeader title="Օգնություն" onBack={() => navigation.goBack()} />
     <View style={styles.headerLine} />
@@ -959,20 +985,22 @@ export const HelpScreen = ({ navigation }) => (
           onPress={() => navigation.navigate(item.route)}
         >
           <View style={styles.helpText}>
-            <Text style={styles.helpTitle}>{item.title}</Text>
-            <Text style={styles.helpSub}>{item.sub}</Text>
+            <Text style={styles.helpTitle}>{t(item.title)}</Text>
+            <Text style={styles.helpSub}>{t(item.sub)}</Text>
           </View>
           <ChevronRight />
         </TouchableOpacity>
       ))}
     </View>
   </Screen>
-);
+  );
+};
 
 export const FaqScreen = ({ navigation }) => {
+  const t = useT();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(null);
-  const items = FAQS.filter(item => item.toLowerCase().includes(query.trim().toLowerCase()));
+  const items = FAQS.filter(item => t(item).toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Screen scroll>
       <PageHeader title="Հաճախ տրվող հարցեր" onBack={() => navigation.goBack()} />
@@ -981,20 +1009,20 @@ export const FaqScreen = ({ navigation }) => {
         {items.map(item => (
           <View key={item}>
             <TouchableOpacity style={styles.faqRow} onPress={() => setOpen(open === item ? null : item)}>
-              <Text style={styles.faqQ}>{item}</Text>
+              <Text style={styles.faqQ}>{t(item)}</Text>
               <ChevronRight />
             </TouchableOpacity>
             {open === item ? (
               <Text style={styles.faqA}>
-                Բացեք համապատասխան բաժինը կարգավորումներից և հետևեք էկրանի քայլերին։ Եթե հարցը մնա, գրեք աջակցմանը։
+                {t('Բացեք համապատասխան բաժինը կարգավորումներից և հետևեք էկրանի քայլերին։ Եթե հարցը մնա, գրեք աջակցմանը։')}
               </Text>
             ) : null}
           </View>
         ))}
         <TouchableOpacity style={styles.helpCard} onPress={() => navigation.navigate(P.SUPPORT)}>
           <View style={styles.helpText}>
-            <Text style={styles.helpTitle}>Չգտա՞ք պատասխանը</Text>
-            <Text style={styles.helpSub}>Գրեք մեզ</Text>
+            <Text style={styles.helpTitle}>{t('Չգտա՞ք պատասխանը')}</Text>
+            <Text style={styles.helpSub}>{t('Գրեք մեզ')}</Text>
           </View>
           <ChevronRight />
         </TouchableOpacity>
@@ -1004,6 +1032,7 @@ export const FaqScreen = ({ navigation }) => {
 };
 
 export const ReportScreen = ({ navigation }) => {
+  const t = useT();
   const [text, setText] = useState('');
   const [images, setImages] = useState([]);
   const [done, setDone] = useState(false);
@@ -1019,8 +1048,8 @@ export const ReportScreen = ({ navigation }) => {
       <PageHeader title="Հայտնել խնդրի մասին" onBack={() => navigation.goBack()} />
       <View style={styles.headerLine} />
       <View style={styles.form}>
-        <Text style={styles.bodyText}>Ներկայացրեք խնդիրը և մենք կփորձենք շտկել այն</Text>
-        <Text style={[styles.fieldLabel, styles.blockTopLg]}>Նկարագրեք խնդիրը</Text>
+        <Text style={styles.bodyText}>{t('Ներկայացրեք խնդիրը և մենք կփորձենք շտկել այն')}</Text>
+        <Text style={[styles.fieldLabel, styles.blockTopLg]}>{t('Նկարագրեք խնդիրը')}</Text>
         <TextInput
           value={text}
           onChangeText={setText}
@@ -1032,7 +1061,7 @@ export const ReportScreen = ({ navigation }) => {
           onPress={() => setImages(list => [...list, list.length])}
         >
           <ImageAddIcon />
-          <Text style={styles.addImageText}>Ավելացնել նկար</Text>
+          <Text style={styles.addImageText}>{t('Ավելացնել նկար')}</Text>
         </TouchableOpacity>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageRow}>
           {images.map(id => (
@@ -1053,8 +1082,6 @@ export const ReportScreen = ({ navigation }) => {
   );
 };
 
-const bars = [8, 14, 10, 18, 12, 16, 9, 14];
-
 export const SupportChatScreen = ({ navigation }) => {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState(THREAD.filter(item => item.type !== 'image'));
@@ -1069,16 +1096,17 @@ export const SupportChatScreen = ({ navigation }) => {
   return (
     <Screen
       footer={
-        <View style={styles.composer}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            style={styles.composerInput}
-            placeholder="Հաղորդագրություն"
-            placeholderTextColor="#B2B2B2"
-          />
-          <TouchableOpacity onPress={send}>{text.trim() ? <SendIcon /> : <MicIcon />}</TouchableOpacity>
-        </View>
+        <ChatComposer
+          value={text}
+          onChangeText={setText}
+          onSend={send}
+          onVoice={note =>
+            setMessages(list => [
+              ...list,
+              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
+            ])
+          }
+        />
       }
     >
       <PageHeader title="Կապ մեզ հետ" onBack={() => navigation.goBack()} />
@@ -1094,17 +1122,14 @@ export const SupportChatScreen = ({ navigation }) => {
           }
           if (item.type === 'voice') {
             return (
-              <View
+              <VoiceBubble
                 key={item.id}
-                style={[styles.bubbleWrap, item.mine ? styles.bubbleOut : styles.bubbleIn, styles.voice]}
-              >
-                <PlaySmallIcon />
-                <View style={styles.wave}>
-                  {bars.map((height, index) => (
-                    <View key={`${item.id}-${index}`} style={barLook(height)} />
-                  ))}
-                </View>
-              </View>
+                id={item.id}
+                mine={item.mine}
+                duration={item.duration}
+                uri={item.uri}
+                bars={item.bars}
+              />
             );
           }
           const mine = item.type === 'out';

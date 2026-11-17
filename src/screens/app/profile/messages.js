@@ -12,9 +12,9 @@ import styles from './styles';
 const MessagesScreen = ({ navigation }) => {
   const [tab, setTab] = useState('letters');
   const [query, setQuery] = useState('');
-  const [invites, setInvites] = useState(INVITES);
+  const [invites, setInvites] = useState([]);
   const q = query.trim().toLowerCase();
-  const chats = CHATS.filter(item => !q || item.user.name.toLowerCase().includes(q));
+  const chats = [].filter(item => !q || item.user.name.toLowerCase().includes(q));
   const visibleInvites = invites.filter(item => !q || item.name.toLowerCase().includes(q));
 
   return (

@@ -6,10 +6,12 @@ import { PinIcon } from '../business/icons';
 import { confirmMapPick } from '../business/mapPick';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { COLORS, Fonts } from '../../../assets/rootStyles';
+import { useT } from '../../../locales/useT';
 
 const DEFAULT_ADDRESS = 'Երևան, Աբովյան 22';
 
 const MapScreen = ({ navigation, route }) => {
+  const t = useT();
   const address = route.params?.address || DEFAULT_ADDRESS;
   const picker = !!route.params?.picker;
 
@@ -36,7 +38,7 @@ const MapScreen = ({ navigation, route }) => {
       <View style={styles.bar}>
         <View style={styles.address}>
           <Text style={styles.addressText}>{address}</Text>
-          <Text style={styles.addressSub}>Հասցե</Text>
+          <Text style={styles.addressSub}>{t('Հասցե')}</Text>
         </View>
         <TouchableOpacity style={styles.go} onPress={confirm} activeOpacity={picker ? 0.8 : 1}>
           <Text style={styles.goText}>→</Text>

@@ -9,12 +9,28 @@ const styles = StyleSheet.create({
       color: COLORS.textPrimary,
       marginBottom: normalize(16),
     },
+    heading: {
+      fontSize: normalize(14),
+      fontWeight: '600',
+      color: COLORS.textPrimary,
+      marginBottom: normalize(8),
+      marginTop: normalize(12),
+    },
+    errorText: {
+      fontSize: normalize(13),
+      color: COLORS.pink,
+      marginBottom: normalize(6),
+    },
     input: {
       fontSize: normalize(14),
       borderColor: COLORS.border,
       borderWidth: 1,
       borderRadius: normalize(16),
       padding: normalize(20),
+      color: COLORS.textPrimary,
+    },
+    inputInvalid: {
+      borderColor: COLORS.pink,
     },
     birthdate: {
       flexDirection: 'row',
@@ -60,6 +76,9 @@ const styles = StyleSheet.create({
     },
     birthdateText: {
       color: COLORS.textPrimary,
+    },
+    birthdatePlaceholder: {
+      color: COLORS.textSecondary,
     },
     button: {
       marginTop: normalize(30),
