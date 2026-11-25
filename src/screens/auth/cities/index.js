@@ -12,26 +12,21 @@ import { getCities } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
 import { setRegistration } from '../draft';
 import { useT } from '../../../locales/useT';
+import { CITY_NAMES, pickCities } from '../../../constants/cities';
 
-const CITIES = [
-  { id: '1', name: 'Երևան' },
-  { id: '2', name: 'Գյումրի' },
-  { id: '3', name: 'Վանաձոր' },
-  { id: '4', name: 'Աբովյան' },
-  { id: '5', name: 'Կապան' },
-];
+const CITIES = CITY_NAMES.map((name, index) => ({ id: String(index + 1), name }));
 
 const ChooseCity = ({ navigation }) => {
   const t = useT();
   const [selectedCity, setSelectedCity] = useState(null);
   const [open, setOpen] = useState(false);
   const remoteCities = useApiList(getCities);
-  const cities = remoteCities
-    ? remoteCities.map(city => ({
-        id: city?.id ?? nameOf(city),
-        name: nameOf(city),
-      })).filter(city => city.name)
-    : CITIES;
+  const cities = pickCities(remoteCities || CITIES)
+    .map(city => ({
+      id: city?.id ?? nameOf(city),
+      name: nameOf(city),
+    }))
+    .filter(city => city.name);
   const selected = cities.find(city => city.id === selectedCity);
 
   const handleContinue = () => {

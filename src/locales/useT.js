@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import i18n from './i18n';
 import { PHRASES } from './phrases';
+import { toPhrase } from './catalog';
 import { currentLanguage } from '../services/language';
 
 const subscribe = listener => {
@@ -10,7 +11,7 @@ const subscribe = listener => {
 
 export const text = source => {
   if (source == null || source === '') return '';
-  const value = String(source);
+  const value = toPhrase(source);
   const lang = currentLanguage();
   if (lang === 'hy') return value;
   return PHRASES[value]?.[lang] || value;

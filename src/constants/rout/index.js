@@ -13,6 +13,7 @@ export const ROUT_NAMES = {
   FAVORITES: 'FavoritesScreen',
   PROFILE: 'ProfileScreen',
   BUSINESS: 'BusinessScreen',
+  EVENT: 'EventDetails',
   BUSINESS_REGISTER: 'BusinessRegister',
   BUSINESS_INFO: 'BusinessInfo',
   SHARE_EMOTIONS: 'ShareEmotions',

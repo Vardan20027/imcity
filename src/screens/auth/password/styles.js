@@ -12,13 +12,15 @@ const styles = StyleSheet.create({
   hint: {
     fontSize: normalize(14),
     color: COLORS.textSecondary,
-    marginBottom: normalize(20),
+    marginBottom: normalize(16),
+  },
+  fieldBlock: {
+    marginBottom: normalize(16),
   },
   label: {
-    fontSize: normalize(14),
-    color: COLORS.textPrimary,
-    marginBottom: normalize(8),
-    marginTop: normalize(12),
+    fontSize: normalize(12),
+    color: COLORS.textSecondary,
+    marginBottom: normalize(6),
   },
   errorText: {
     fontSize: normalize(13),
@@ -26,18 +28,16 @@ const styles = StyleSheet.create({
     marginBottom: normalize(6),
   },
   input: {
-    fontSize: normalize(14),
-    borderColor: COLORS.border,
     borderWidth: 1,
+    borderColor: COLORS.border,
     borderRadius: normalize(16),
-    padding: normalize(16),
+    paddingHorizontal: normalize(16),
+    paddingVertical: normalize(14),
+    fontSize: normalize(15),
     color: COLORS.textPrimary,
   },
   inputInvalid: {
     borderColor: COLORS.pink,
-  },
-  button: {
-    marginTop: normalize(30),
   },
 });
 

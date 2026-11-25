@@ -13,9 +13,11 @@ import {
   useEmotionFilter,
 } from './parts';
 import { openBusiness } from './attractions';
+import { GRID_BY_KEY, HOTELS, matchesCategory } from './data';
 import { useApiList } from '../../../state/reads/useList';
 import { getPlaces } from '../../../state/reads/operations';
 import { nameOf, remoteImage } from '../../../state/reads/shape';
+import { useT } from '../../../locales/useT';
 import styles from './styles';
 
 const PlaceCard = ({ item, onPress }) => {
@@ -23,7 +25,9 @@ const PlaceCard = ({ item, onPress }) => {
   return (
     <TouchableOpacity style={styles.placeCard} activeOpacity={0.9} onPress={onPress}>
       <View style={styles.placeImage}>
-        <Image source={item.image} style={styles.attractionImageFill} resizeMode="cover" />
+        {item.image ? (
+          <Image source={item.image} style={styles.attractionImageFill} resizeMode="cover" />
+        ) : null}
         <TouchableOpacity
           style={[styles.favorite, saved && styles.chipPressed]}
           activeOpacity={0.8}
@@ -37,7 +41,7 @@ const PlaceCard = ({ item, onPress }) => {
         <EmotionButton compact />
       </View>
       <View style={styles.placeAuthor}>
-        <Image source={item.logo} style={styles.placeLogo} />
+        {item.logo ? <Image source={item.logo} style={styles.placeLogo} /> : null}
         <Text style={styles.placeName} numberOfLines={1}>
           {item.name}
         </Text>
@@ -50,24 +54,25 @@ export const PlaceGridScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const title = route.params?.title || 'Հյուրանոցներ';
+  const key = route.params?.key;
   const remotePlaces = useApiList(getPlaces);
-  const itemsSource = (remotePlaces || [])
-    .map(item => ({
-      id: item?.id,
-      name: nameOf(item),
-      image: remoteImage(item?.image || item?.cover || item?.photo),
-      logo: remoteImage(item?.logo),
-    }))
-    .filter(item => item.name);
   const [query, setQuery] = useState('');
   const { selectedIds, toggle } = useEmotionFilter();
-  const items = useMemo(
-    () =>
-      itemsSource.filter(item =>
-        item.name.toLowerCase().includes(query.trim().toLowerCase()),
-      ),
-    [itemsSource, query],
-  );
+  const items = useMemo(() => {
+    const fromApi = (remotePlaces || [])
+      .filter(item => matchesCategory(item, key, title))
+      .map(item => ({
+        id: item?.id,
+        name: nameOf(item),
+        image: remoteImage(item?.image || item?.cover || item?.photo),
+        logo: remoteImage(item?.logo),
+      }))
+      .filter(item => item.name);
+    const source = fromApi.length ? fromApi : GRID_BY_KEY[key] || HOTELS;
+    const needle = query.trim().toLowerCase();
+    if (!needle) return source;
+    return source.filter(item => item.name.toLowerCase().includes(needle));
+  }, [remotePlaces, key, title, query]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -92,6 +97,7 @@ export const PlaceGridScreen = () => {
 };
 
 export const CategoryListScreen = () => {
+  const t = useT();
   const navigation = useNavigation();
   const route = useRoute();
   const title = route.params?.title || '';
@@ -126,7 +132,7 @@ export const CategoryListScreen = () => {
             }
           >
             <ServiceIcon name={item.icon} size={20} />
-            <Text style={styles.listLabel}>{item.title}</Text>
+            <Text style={styles.listLabel}>{t(item.title)}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

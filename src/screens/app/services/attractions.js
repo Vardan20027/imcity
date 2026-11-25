@@ -13,8 +13,20 @@ import {
   ShareButton,
   useEmotionFilter,
 } from './parts';
-import { ATTRACTIONS, MEMORIES } from './data';
+import { useApiList } from '../../../state/reads/useList';
+import { getPlaces } from '../../../state/reads/operations';
+import { nameOf, remoteImage } from '../../../state/reads/shape';
+import { ATTRACTIONS, MEMORIES, matchesCategory } from './data';
 import styles from './styles';
+
+const toAttraction = item => ({
+  id: item?.id,
+  title: nameOf(item),
+  image: remoteImage(item?.image || item?.cover || item?.photo),
+  description: item?.description || item?.about || '',
+  full: item?.description || item?.about || '',
+  location: item?.location || item?.address || item?.city?.name || '',
+});
 
 const AttractionCard = ({ item, onPress, expanded }) => {
   const [saved, setSaved] = useState(false);
@@ -60,7 +72,21 @@ export const AttractionsScreen = () => {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const { selectedIds, toggle } = useEmotionFilter();
-  const items = useMemo(() => [], []);
+  const remotePlaces = useApiList(getPlaces);
+  const source = useMemo(() => {
+    const fromApi = (remotePlaces || [])
+      .filter(item => matchesCategory(item, 'attraction', 'տեսարժան'))
+      .map(toAttraction)
+      .filter(item => item.title);
+    return fromApi.length ? fromApi : ATTRACTIONS;
+  }, [remotePlaces]);
+  const items = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return source;
+    return source.filter(item =>
+      `${item.title} ${item.description}`.toLowerCase().includes(needle),
+    );
+  }, [source, query]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>

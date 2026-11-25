@@ -1,5 +1,5 @@
-import { enLoginScreen } from 'locales/screens/Auth/en';
-import { enEventScreen } from 'locales/screens/Event/en';
+import { enLoginScreen } from './screens/Auth/en';
+import { enEventScreen } from './screens/Event/en';
 
 export default {
   ...enLoginScreen,

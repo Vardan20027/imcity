@@ -47,15 +47,37 @@ const styles = StyleSheet.create({
   },
   hero: {
     marginTop: normalize(8),
+    alignItems: 'center',
+  },
+  heroStage: {
+    width: '100%',
     height: normalize(210),
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroBg: {
-    ...StyleSheet.absoluteFillObject,
+  glowLeft: {
+    position: 'absolute',
+    width: normalize(180),
+    height: normalize(180),
+    borderRadius: normalize(90),
+    backgroundColor: 'rgba(255, 183, 213, 0.55)',
+    left: normalize(36),
+    top: normalize(16),
+    zIndex: 0,
+  },
+  glowRight: {
+    position: 'absolute',
+    width: normalize(170),
+    height: normalize(170),
+    borderRadius: normalize(85),
+    backgroundColor: 'rgba(255, 208, 194, 0.7)',
+    right: normalize(28),
+    top: normalize(28),
+    zIndex: 0,
   },
   coinPill: {
     position: 'absolute',
+    zIndex: 2,
     left: normalize(24),
     top: normalize(16),
     height: normalize(28),
@@ -73,10 +95,12 @@ const styles = StyleSheet.create({
   },
   heartBtn: {
     position: 'absolute',
+    zIndex: 2,
     right: normalize(24),
     top: normalize(12),
   },
   logoWrap: {
+    zIndex: 2,
     width: normalize(112),
     height: normalize(112),
     alignItems: 'center',
@@ -87,6 +111,7 @@ const styles = StyleSheet.create({
     height: normalize(112),
     borderRadius: normalize(56),
     backgroundColor: COLORS.white,
+    overflow: 'hidden',
   },
   logoEmpty: {
     backgroundColor: '#F3F3F3',
@@ -109,13 +134,14 @@ const styles = StyleSheet.create({
   },
   heroCaption: {
     marginTop: normalize(10),
+    marginBottom: normalize(4),
     fontFamily: Fonts.arm.regular,
     fontSize: normalize(11),
     lineHeight: normalize(14),
     color: '#8E8C8C',
   },
   stats: {
-    marginTop: normalize(8),
+    marginTop: normalize(16),
     paddingHorizontal: normalize(48),
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -352,6 +378,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: normalize(4),
+  },
+  eventActionsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: normalize(12),
   },
   countChip: {
     flexDirection: 'row',

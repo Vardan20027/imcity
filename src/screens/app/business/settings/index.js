@@ -356,17 +356,7 @@ const SupportScreen = ({ navigation }) => {
   return (
     <Screen
       footer={
-        <ChatComposer
-          value={text}
-          onChangeText={setText}
-          onSend={send}
-          onVoice={note =>
-            setMessages(list => [
-              ...list,
-              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
-            ])
-          }
-        />
+        <ChatComposer value={text} onChangeText={setText} onSend={send} />
       }
     >
       <PageHeader title="Կապ մեզ հետ" onBack={() => navigation.goBack()} />

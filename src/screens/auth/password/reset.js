@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import AuthLayout from '../../../components/layout/AuthLayout';
 import Button from '../../../components/button';
 import OnboardingHeader from '../../../components/onboarding/header';
@@ -23,37 +23,45 @@ const ResetPasswordScreen = ({ navigation, route }) => {
 
   return (
     <AuthLayout showLogo={false}>
-      <OnboardingHeader currentStep={1} totalSteps={5} onBack={() => navigation.goBack()} />
-      <Text style={styles.title}>{t('Նոր գաղտնաբառ')}</Text>
-      <Text style={styles.hint}>{t('Մուտքագրեք կոդը և նոր գաղտնաբառը')}</Text>
-      <Text style={styles.label}>{t('Կոդ')}</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="000000"
-        placeholderTextColor={COLORS.textSecondary}
-        keyboardType="number-pad"
-        maxLength={CODE_LENGTH}
-        value={code}
-        onChangeText={value => setCode(value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
-      />
-      <Text style={styles.label}>{t('Նոր գաղտնաբառ')}</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={t('Գաղտնաբառ')}
-        placeholderTextColor={COLORS.textSecondary}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Text style={styles.label}>{t('Կրկնել գաղտնաբառը')}</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={t('Գաղտնաբառ')}
-        placeholderTextColor={COLORS.textSecondary}
-        secureTextEntry
-        value={repeat}
-        onChangeText={setRepeat}
-      />
+      <View>
+        <OnboardingHeader currentStep={1} totalSteps={5} onBack={() => navigation.goBack()} />
+        <Text style={styles.title}>{t('Նոր գաղտնաբառ')}</Text>
+        <Text style={styles.hint}>{t('Մուտքագրեք կոդը և նոր գաղտնաբառը')}</Text>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{t('Կոդ')}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="000000"
+            placeholderTextColor={COLORS.textSecondary}
+            keyboardType="number-pad"
+            maxLength={CODE_LENGTH}
+            value={code}
+            onChangeText={value => setCode(value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
+          />
+        </View>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{t('Նոր գաղտնաբառ')}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t('Գաղտնաբառ')}
+            placeholderTextColor={COLORS.textSecondary}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>{t('Կրկնել գաղտնաբառը')}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t('Գաղտնաբառ')}
+            placeholderTextColor={COLORS.textSecondary}
+            secureTextEntry
+            value={repeat}
+            onChangeText={setRepeat}
+          />
+        </View>
+      </View>
       <Button
         label="Պահպանել"
         onPress={() =>
@@ -66,7 +74,6 @@ const ResetPasswordScreen = ({ navigation, route }) => {
           })
         }
         disabled={!ready}
-        style={styles.button}
       />
     </AuthLayout>
   );

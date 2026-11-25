@@ -1,5 +1,5 @@
-import { amLoginScreen } from 'locales/screens/Auth/am';
-import { amEventScreen } from 'locales/screens/Event/am';
+import { amLoginScreen } from './screens/Auth/am';
+import { amEventScreen } from './screens/Event/am';
 
 export default {
   ...amLoginScreen,

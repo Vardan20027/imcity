@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { ROUT_NAMES } from '../../../constants/rout';
-import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import styles from './styles';
 import MIcon from '../../../components/svgs';
 import { ICON_NAMES } from '../../../components/svgs/icon_names';
@@ -18,9 +17,11 @@ import {
   FavoriteIcon,
   FireIcon,
   HeartFillIcon,
+  InviteIcon,
   JoinIcon,
   LeafIcon,
   MoreIcon,
+  PeopleIcon,
   PlayIcon,
 } from '../home/icons';
 import {
@@ -44,6 +45,7 @@ import { normalize } from '../../../assets/deviceInfo/normalize';
 import { useApiItem, useApiList } from '../../../state/reads/useList';
 import { getGallery, getPlaceById } from '../../../state/reads/operations';
 import { imageSource, mapGalleryPhoto, mapPlace, numericId } from '../../../state/reads/shape';
+import { useT } from '../../../locales/useT';
 
 const TABS = [
   { id: 'gallery', Icon: TabGridIcon },
@@ -106,27 +108,11 @@ const DEFAULTS = {
   hours: '09:00 - 23:00',
 };
 
-const HeroGlow = () => (
-  <Svg style={styles.heroBg} width="100%" height="100%">
-    <Defs>
-      <RadialGradient id="leftGlow" cx="18%" cy="42%" r="58%">
-        <Stop offset="0" stopColor="#FFB7D5" stopOpacity="0.85" />
-        <Stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-      </RadialGradient>
-      <RadialGradient id="rightGlow" cx="82%" cy="46%" r="55%">
-        <Stop offset="0" stopColor="#FFD0C2" stopOpacity="0.75" />
-        <Stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-      </RadialGradient>
-    </Defs>
-    <Rect width="100%" height="100%" fill="url(#leftGlow)" />
-    <Rect width="100%" height="100%" fill="url(#rightGlow)" />
-  </Svg>
-);
-
 const pick = (params, key, fallback) =>
   Object.prototype.hasOwnProperty.call(params, key) ? params[key] : fallback;
 
 const BusinessScreen = ({ navigation }) => {
+  const t = useT();
   const route = useRoute();
   const params = route.params || {};
   const remote = useApiItem(getPlaceById, numericId(params.id));
@@ -147,6 +133,16 @@ const BusinessScreen = ({ navigation }) => {
   };
   const [tab, setTab] = useState(params.initialTab || 'gallery');
   const energiesOn = tab !== 'gallery';
+  const shareEvent = () => {
+    Share.share({
+      message: [
+        'Scorpions',
+        t('Scorpions-ը գալիս է Երևան: Լեգենդար Scorpions ռոք խումբը պատրաստվում է ներկայացնել իր հայտնի հիթերը կենդանի կատարմամբ:'),
+        'Event Hub',
+        '35 $',
+      ].join('\n'),
+    }).catch(() => {});
+  };
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -181,22 +177,25 @@ const BusinessScreen = ({ navigation }) => {
         contentContainerStyle={styles.content}
       >
         <View style={styles.hero}>
-          <HeroGlow />
-          <View style={styles.coinPill}>
-            <CoinIcon />
-            <Text style={styles.coinText}>{business.coins}</Text>
-          </View>
-          <View style={styles.heartBtn}>
-            <HeartOutlineIcon />
-          </View>
-          <View style={styles.logoWrap}>
-            {business.logo ? (
-              <Image source={business.logo} style={styles.logo} />
-            ) : (
-              <View style={[styles.logo, styles.logoEmpty]} />
-            )}
-            <View style={styles.chatBtn}>
-              <ChatIcon />
+          <View style={styles.heroStage}>
+            <View style={styles.glowLeft} />
+            <View style={styles.glowRight} />
+            <View style={styles.coinPill}>
+              <CoinIcon />
+              <Text style={styles.coinText}>{business.coins}</Text>
+            </View>
+            <View style={styles.heartBtn}>
+              <HeartOutlineIcon />
+            </View>
+            <View style={styles.logoWrap}>
+              {business.logo ? (
+                <Image source={business.logo} style={styles.logo} />
+              ) : (
+                <View style={[styles.logo, styles.logoEmpty]} />
+              )}
+              <View style={styles.chatBtn}>
+                <ChatIcon />
+              </View>
             </View>
           </View>
           <Text style={styles.heroCaption}>{business.caption}</Text>
@@ -282,8 +281,7 @@ const BusinessScreen = ({ navigation }) => {
               </View>
             </View>
             <View style={styles.infoCopy}>
-              <Text style={styles.infoText}>{business.description}</Text>
-              <Text style={styles.more}>more</Text>
+              <Text style={styles.infoText}>{t(business.description)}</Text>
             </View>
             <View style={styles.infoRows}>
               {[
@@ -363,17 +361,34 @@ const BusinessScreen = ({ navigation }) => {
                 <FireIcon />
                 <HeartFillIcon />
               </View>
-              <View style={styles.countChip}>
-                <JoinIcon dark />
-                <Text style={styles.countLabel}>Միանում եմ</Text>
-                <Text style={styles.countValue}>2640</Text>
+              <View style={styles.eventActionsRight}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  delayPressIn={0}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  onPress={shareEvent}
+                >
+                  <PeopleIcon />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  delayPressIn={0}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  onPress={shareEvent}
+                >
+                  <InviteIcon />
+                </TouchableOpacity>
+                <View style={styles.countChip}>
+                  <JoinIcon dark />
+                  <Text style={styles.countLabel}>Միանում եմ</Text>
+                  <Text style={styles.countValue}>2640</Text>
+                </View>
               </View>
             </View>
             <View style={styles.eventBody}>
               <Text style={styles.infoText}>
-                Scorpions-ը գալիս է Երևան: Լեգենդար Scorpions ռոք խումբը պատրաստվում է ...
+                {t('Scorpions-ը գալիս է Երևան: Լեգենդար Scorpions ռոք խումբը պատրաստվում է ներկայացնել իր հայտնի հիթերը կենդանի կատարմամբ:')}
               </Text>
-              <Text style={styles.more}>more</Text>
               <View style={styles.infoRow}>
                 <PinIcon />
                 <Text style={styles.infoRowText}>Event Hub</Text>

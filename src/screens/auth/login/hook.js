@@ -76,13 +76,19 @@ const isAmbiguousLogin = error => {
   return mentionsEmail(blob) && mentionsPassword(blob);
 };
 
+const isEmailTaken = error =>
+  /already|taken|exists|in use|օգտագործված|արդեն գրանց|արդեն օգտագործ/.test(errorText(error).toLowerCase());
+
 const isWrongPassword = error => {
-  if (isEmailNotFound(error) || isAmbiguousLogin(error) || errorStatus(error) === 400) return false;
+  if (isEmailNotFound(error) || isEmailTaken(error)) return false;
   const body = errorBody(error);
   const passwordMessage = textOf(body?.errors?.password).toLowerCase();
   if (passwordMessage && !mentionsEmail(passwordMessage)) return true;
   const blob = errorText(error).toLowerCase();
-  return /incorrect password|wrong password|password is incorrect|գաղտնաբառը սխալ/.test(blob);
+  return (
+    isAmbiguousLogin(error) ||
+    /incorrect password|wrong password|password is incorrect|գաղտնաբառը սխալ|կամ գաղտնաբառ/.test(blob)
+  );
 };
 
 const clearSessionTokens = () =>
@@ -151,15 +157,18 @@ function useContainer() {
       navigation.navigate('Verification', { token: verificationToken(response) });
       return { ok: true };
     } catch (error) {
-      if (isEmailNotFound(error) || isAmbiguousLogin(error) || errorStatus(error) === 400) {
+      if (isEmailTaken(error)) {
+        return { field: 'email', message: 'Էլ. հասցեն արդեն օգտագործված է' };
+      }
+      if (isEmailNotFound(error)) {
         return {
           notFound: true,
           field: 'email',
-          message: errorText(error) || 'Այս էլ. հասցեն չի գտնվել',
+          message: 'Այս էլ. հասցեն դեռ գրանցված չէ',
         };
       }
       if (isWrongPassword(error)) {
-        return { field: 'password', message: 'Գաղտնաբառը սխալ է' };
+        return { field: 'password', message: 'Սխալ էլ. հասցե կամ գաղտնաբառ' };
       }
       const message = errorText(error);
       const emailMessage = textOf(error?.response?.data?.errors?.email);
@@ -177,10 +186,15 @@ function useContainer() {
       passwordConfirm,
       firstName,
       lastName,
-    }).catch(signUpError => ({
-      field: 'email',
-      message: errorText(signUpError) || 'Չհաջողվեց գրանցվել այս էլ. հասցեով',
-    }));
+    }).catch(signUpError => {
+      if (isEmailTaken(signUpError)) {
+        return { field: 'email', message: 'Էլ. հասցեն արդեն օգտագործված է' };
+      }
+      return {
+        field: 'email',
+        message: errorText(signUpError) || 'Չհաջողվեց գրանցվել այս էլ. հասցեով',
+      };
+    });
 
   return { handleLoginAction, handleSignUp };
 }

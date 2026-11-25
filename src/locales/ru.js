@@ -1,5 +1,5 @@
-import { ruLoginScreen } from 'locales/screens/Auth/ru';
-import { ruEventScreen } from 'locales/screens/Event/ru';
+import { ruLoginScreen } from './screens/Auth/ru';
+import { ruEventScreen } from './screens/Event/ru';
 
 export default {
   ...ruLoginScreen,

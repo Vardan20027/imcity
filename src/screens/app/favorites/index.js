@@ -5,7 +5,9 @@ import Svg, { Path } from 'react-native-svg';
 import { normalize } from '../../../assets/deviceInfo/normalize';
 import { LocationIcon } from '../home/icons';
 import { EmotionButton, EmotionMarks, PageHeader, SearchField } from '../services/parts';
-import { DREAM_GOAL, DREAM_VALUE, FAVORITES } from './data';
+import { DREAM_GOAL } from './data';
+import { removeFavorite, useFavorites } from './store';
+import { useT } from '../../../locales/useT';
 import styles from './styles';
 
 const HEART_PATH =
@@ -24,7 +26,51 @@ const OrangeHeart = ({ size = 16 }) => (
 
 const fillStyle = ratio => [styles.dreamFill, { width: `${ratio * 100}%` }];
 
-const FavoriteCard = ({ item, onOpen, onRemove }) => (
+const EmptyMark = () => (
+  <Svg width={normalize(78)} height={normalize(72)} viewBox="0 0 78 72" fill="none">
+    <Path
+      d="M28 8.5c.4 1.6-.2 2.4-1.2 2.8M22.5 12.2c1.3.2 2 .9 1.8 2"
+      stroke="#C5C5C5"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+    />
+    <Path
+      d="M39.2 22.2c-1.7-3.6-5-5.7-8.8-5.7-5.6 0-9.6 4.3-9.6 9.6 0 8.4 11.2 14.8 18.4 18.4 7.2-3.6 18.4-10 18.4-18.4 0-5.3-4-9.6-9.6-9.6-3.8 0-7.1 2.1-8.8 5.7Z"
+      stroke="#C5C5C5"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="M44.5 41.5c1.8 2.2 4.8 5.4 9.2 7.2 3.2 1.3 5.6 3.4 6.8 6.2.6 1.4.4 2.6-.6 3.4-1.6 1.3-4.2.6-6.4-1.2-2.4-2-3.2-4.2-3.4-5.6"
+      stroke="#C5C5C5"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <Path
+      d="M49.2 48.2c2.4 1.2 6.6 2.2 10.4 1.2M46.8 52.4c2.8.8 6.8.8 10.2-.6"
+      stroke="#C5C5C5"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </Svg>
+);
+
+const EmptyFavorites = () => {
+  const t = useT();
+  return (
+    <View style={styles.empty}>
+      <EmptyMark />
+      <Text style={styles.emptyTitle}>{t('Նախընտրածներ դեռ չկան')}</Text>
+      <Text style={styles.emptyText}>
+        {t('Պահպանեք ձեր սիրելի վայրերը, որպեսզի հետո գտնեք դրանք')}
+      </Text>
+    </View>
+  );
+};
+
+const FavoriteCard = ({ item, onOpen, onRemove }) => {
+  const t = useT();
+  return (
   <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={onOpen}>
     <View style={styles.photo}>
       {item.image ? (
@@ -43,9 +89,9 @@ const FavoriteCard = ({ item, onOpen, onRemove }) => (
         </TouchableOpacity>
       </View>
       <View style={styles.copy}>
-        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.title}>{t(item.title)}</Text>
         <Text style={styles.description} numberOfLines={2}>
-          {item.description}
+          {t(item.description)}
         </Text>
       </View>
       <View style={styles.actions}>
@@ -56,20 +102,29 @@ const FavoriteCard = ({ item, onOpen, onRemove }) => (
       </View>
     </View>
   </TouchableOpacity>
-);
+  );
+};
 
 const FavoritesScreen = ({ navigation }) => {
+  const t = useT();
   const [query, setQuery] = useState('');
-  const [items, setItems] = useState([]);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const [markerWidth, setMarkerWidth] = useState(0);
+  const items = useFavorites();
+  const progress = Math.min(items.length, DREAM_GOAL) / DREAM_GOAL;
+  const markerLeft = Math.min(
+    Math.max(trackWidth * progress - markerWidth / 2, 0),
+    Math.max(trackWidth - markerWidth, 0),
+  );
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) {
       return items;
     }
     return items.filter(item =>
-      `${item.title} ${item.description}`.toLowerCase().includes(needle),
+      `${t(item.title)} ${t(item.description)}`.toLowerCase().includes(needle),
     );
-  }, [items, query]);
+  }, [items, query, t]);
 
   const openPlace = item => {
     navigation.navigate('Services', {
@@ -87,23 +142,27 @@ const FavoritesScreen = ({ navigation }) => {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <PageHeader title="Նախընտրածներ" onBack={() => navigation.goBack()} />
       {items.length === 0 ? (
-        <View style={styles.empty}>
-          <View style={styles.emptyArt} />
-        </View>
+        <EmptyFavorites />
       ) : (
         <>
           <SearchField value={query} onChangeText={setQuery} style={styles.search} />
-          <View style={styles.dream}>
+          <View
+            style={styles.dream}
+            onLayout={event => setTrackWidth(event.nativeEvent.layout.width)}
+          >
             <View style={styles.dreamTrack}>
-              <View style={fillStyle(DREAM_VALUE / DREAM_GOAL)} />
+              <View style={fillStyle(progress)} />
             </View>
-            <View style={styles.dreamHeart}>
+            <View
+              style={[styles.dreamMarker, { left: markerLeft }]}
+              onLayout={event => setMarkerWidth(event.nativeEvent.layout.width)}
+            >
               <OrangeHeart size={24} />
+              <Text style={styles.dreamCount}>
+                <Text style={styles.dreamCurrent}>{`${items.length} `}</Text>
+                <Text style={styles.dreamRest}>{`/ ${DREAM_GOAL}`}</Text>
+              </Text>
             </View>
-            <Text style={styles.dreamCount}>
-              <Text style={styles.dreamCurrent}>{`${DREAM_VALUE} `}</Text>
-              <Text style={styles.dreamRest}>{`/ ${DREAM_GOAL}`}</Text>
-            </Text>
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -111,16 +170,14 @@ const FavoritesScreen = ({ navigation }) => {
             contentContainerStyle={styles.list}
           >
             {visible.length === 0 ? (
-              <View style={styles.emptyInList}>
-                <View style={styles.emptyArt} />
-              </View>
+              <EmptyFavorites />
             ) : (
               visible.map(item => (
                 <FavoriteCard
                   key={item.id}
                   item={item}
                   onOpen={() => openPlace(item)}
-                  onRemove={() => setItems(list => list.filter(row => row.id !== item.id))}
+                  onRemove={() => removeFavorite(item.id)}
                 />
               ))
             )}

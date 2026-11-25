@@ -317,14 +317,6 @@ export const EyeIcon = ({ off }) => (
   </I>
 );
 
-export const MicIcon = () => (
-  <I size={20}>
-    <Rect x="9" y="4" width="6" height="10" rx="3" stroke="#8E8C8C" strokeWidth="1.6" />
-    <Path d="M7 11.5C7 14.5 9.2 16.5 12 16.5C14.8 16.5 17 14.5 17 11.5" stroke="#8E8C8C" strokeWidth="1.6" strokeLinecap="round" />
-    <Path d="M12 16.5V19.5" stroke="#8E8C8C" strokeWidth="1.6" strokeLinecap="round" />
-  </I>
-);
-
 export const SendIcon = () => (
   <I size={20}>
     <Path d="M4 12L20 4L13 20L11 13L4 12Z" fill="#FF8700" />
@@ -335,14 +327,6 @@ export const PlaySmallIcon = () => (
   <I size={28}>
     <Circle cx="12" cy="12" r="10" fill="#616161" />
     <Path d="M10 8.5L16 12L10 15.5V8.5Z" fill="white" />
-  </I>
-);
-
-export const PauseSmallIcon = () => (
-  <I size={28}>
-    <Circle cx="12" cy="12" r="10" fill="#616161" />
-    <Rect x="8.5" y="8" width="2.2" height="8" rx="0.6" fill="white" />
-    <Rect x="13.3" y="8" width="2.2" height="8" rx="0.6" fill="white" />
   </I>
 );
 

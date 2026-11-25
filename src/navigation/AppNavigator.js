@@ -9,6 +9,7 @@ import ProfileNavigator from '../screens/app/profile';
 import { HIDE_TAB_ROUTES } from '../screens/app/profile/routes';
 import NotificationsScreen from '../screens/app/notifications';
 import BusinessScreen from '../screens/app/business';
+import EventDetailsScreen from '../screens/app/business/event';
 import RegisterNavigator from '../screens/app/business/register';
 import InfoNavigator from '../screens/app/business/info';
 import ShareEmotionsScreen from '../screens/app/business/share';
@@ -182,6 +183,7 @@ const AppNavigator = () => (
       component={NotificationsScreen}
     />
     <Stack.Screen name={ROUT_NAMES.BUSINESS} component={BusinessScreen} />
+    <Stack.Screen name={ROUT_NAMES.EVENT} component={EventDetailsScreen} />
     <Stack.Screen name={ROUT_NAMES.BUSINESS_REGISTER} component={RegisterNavigator} />
     <Stack.Screen name={ROUT_NAMES.BUSINESS_INFO} component={InfoNavigator} />
     <Stack.Screen name={ROUT_NAMES.SHARE_EMOTIONS} component={ShareEmotionsScreen} />

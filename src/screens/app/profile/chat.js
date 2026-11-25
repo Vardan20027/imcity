@@ -93,17 +93,7 @@ const ChatScreen = ({ navigation, route }) => {
             );
           })}
         </ScrollView>
-        <ChatComposer
-          value={text}
-          onChangeText={setText}
-          onSend={send}
-          onVoice={note =>
-            setMessages(list => [
-              ...list,
-              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
-            ])
-          }
-        />
+        <ChatComposer value={text} onChangeText={setText} onSend={send} />
       </KeyboardAvoidingView>
       <BottomSheet visible={menu} onClose={() => setMenu(false)}>
         <SheetAction icon={<ShareIcon />} label="Կիսվել" onPress={() => setMenu(false)} />

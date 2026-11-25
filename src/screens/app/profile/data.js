@@ -190,15 +190,7 @@ export const SUGGESTED = [a2, a3, a4, a5, alex, lilit, a1].map((avatar, index) =
   user: { ...ANNA, id: `sug-user-${index}`, name: contactName, avatar },
 }));
 
-export const CITIES = [
-  'Երևան',
-  'Գյումրի',
-  'Վանաձոր',
-  'Աբովյան',
-  'Կապան',
-  'Գորիս',
-  'Դիլիջան',
-];
+export { CITY_NAMES as CITIES } from '../../../constants/cities';
 
 export const GENDERS = ['Իգական', 'Արական'];
 

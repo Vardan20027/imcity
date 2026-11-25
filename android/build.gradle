@@ -20,24 +20,15 @@ buildscript {
 
 apply plugin: "com.facebook.react.rootproject"
 
-// `./gradlew clean` asks CMake to reconfigure so it can delete native outputs.
-// With the New Architecture that reconfigure reads codegen JNI folders that
-// library clean tasks have already removed, so clean fails in CMake.
-subprojects { subproject ->
-    subproject.plugins.withId("com.android.application") {
-        skipBrokenNativeClean(subproject)
-    }
-    subproject.plugins.withId("com.android.library") {
-        skipBrokenNativeClean(subproject)
-    }
-}
-
-def skipBrokenNativeClean(Project subproject) {
-    def configure = {
-        subproject.tasks.configureEach { task ->
-            if (task.name.startsWith("externalNativeBuildClean")) {
-                task.enabled = false
-            }
+// CMake clean reconfigures the native build and looks for codegen JNI folders
+// that library clean tasks have already deleted. Disable that clean and remove
+// the stale .cxx cache instead.
+gradle.projectsEvaluated {
+    rootProject.subprojects { subproject ->
+        subproject.tasks.matching { task ->
+            task.name.startsWith("externalNativeBuildClean")
+        }.configureEach { task ->
+            task.enabled = false
         }
         def clean = subproject.tasks.findByName("clean")
         if (clean != null) {
@@ -48,10 +39,5 @@ def skipBrokenNativeClean(Project subproject) {
                 }
             }
         }
-    }
-    if (subproject.state.executed) {
-        configure()
-    } else {
-        subproject.afterEvaluate(configure)
     }
 }

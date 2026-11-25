@@ -20,9 +20,12 @@ import { ROUT_NAMES } from '../../../constants/rout';
 import { useApiList } from '../../../state/reads/useList';
 import { getCities } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
+import { toPhrase } from '../../../locales/catalog';
+import { CITY_NAMES, pickCities } from '../../../constants/cities';
 import styles from './styles';
 import { useProfile } from '../profile/data';
 import { useT } from '../../../locales/useT';
+import { toggleFavorite, useFavorites } from '../favorites/store';
 import {
   FavoriteIcon,
   FireIcon,
@@ -39,7 +42,6 @@ import {
   VolumeIcon,
 } from './icons';
 
-const CITIES = ['Երևան', 'Կապան', 'Գորիս', 'Գյումրի', 'Արարատ'];
 const CHIP_ICON_BOX = 16;
 const CHIP_ICON_NATIVE = {
   [ICON_NAMES.EMOTIONS.CALM]: [19, 19],
@@ -135,6 +137,8 @@ const FEED = [
     countdown: '2 օրից',
     description:
       'Scorpions-ը գալիս է Երևան: Լեգենդար Scorpions ռոք խումբը պատրաստվում է ...',
+    details:
+      'Scorpions-ը գալիս է Երևան: Լեգենդար Scorpions ռոք խումբը պատրաստվում է ներկայացնել իր հայտնի հիթերը կենդանի կատարմամբ:',
     location: 'Event Hub',
     locationBold: true,
     price: '35 $',
@@ -173,6 +177,8 @@ const FEED = [
     media: require('../../../assets/images/home/hotel.png'),
     description:
       'Բացահայտեք բարձրակարգ խոհանոցը մեզ հետ: Վայելեք յուրահատուկ համեր և...',
+    details:
+      'Բացահայտեք բարձրակարգ խոհանոցը մեզ հետ: Վայելեք յուրահատուկ համեր և հարմարավետ միջավայր',
     location: 'Երևան, Աբովյան 14',
     actionLabel: 'Էմոցիա',
     count: '2640',
@@ -212,6 +218,8 @@ const FEED = [
     memoryAvatar: require('../../../assets/images/home/avatar-ani.png'),
     description:
       'Հիանալի տեղ ընկերների հետ ժամանակ անցկացնելու համար․գեղեցիկ տեսար... ',
+    details:
+      'Հիանալի տեղ ընկերների հետ ժամանակ անցկացնելու համար։ Գեղեցիկ տեսարան և ջերմ մթնոլորտ։',
     location: 'Երևան, Աբովյան 14',
     actionLabel: 'Էմոցիա',
     count: '2640',
@@ -247,6 +255,7 @@ const FEED = [
     author: 'Խուստուփ լեռ',
     media: require('../../../assets/images/home/attraction.png'),
     description: 'Խուստուփ-Կատարա լեռնաշղթայի ամենա-բարձր գագաթը...',
+    details: 'Խուստուփ-Կատարա լեռնաշղթայի ամենաբարձր գագաթը:',
     actionLabel: 'Էմոցիա',
     count: '2640',
     reactors: [
@@ -415,7 +424,8 @@ const Reactions = ({ reactors }) => (
 
 function MediaOverlays({ item, showPills }) {
   const t = useT();
-  const [liked, setLiked] = useState(false);
+  const favorites = useFavorites();
+  const liked = favorites.some(row => row.id === item.id);
   const [playing, setPlaying] = useState(false);
 
   return (
@@ -437,7 +447,7 @@ function MediaOverlays({ item, showPills }) {
         style={[styles.likeBtn, LIKE_POS[item.type]]}
         activeOpacity={0.8}
         delayPressIn={0}
-        onPress={() => setLiked(v => !v)}
+        onPress={() => toggleFavorite(item)}
       >
         {liked ? <HeartFillIcon /> : <FavoriteIcon />}
       </TouchableOpacity>
@@ -508,8 +518,17 @@ const CountChip = ({ variant, label, count }) => {
   );
 };
 
+const sharePost = item => {
+  Share.share({
+    message: [item.author, item.details || item.description, item.location, item.price]
+      .filter(Boolean)
+      .join('\n'),
+  }).catch(() => {});
+};
+
 const ActionsRow = ({ item }) => {
   const isEvent = item.type === 'event';
+  const share = () => sharePost(item);
   return (
     <View style={styles.actionsRow}>
       <View style={styles.emotionIcons}>
@@ -522,11 +541,32 @@ const ActionsRow = ({ item }) => {
       >
         {isEvent ? (
           <>
-            <PeopleIcon />
-            <InviteIcon />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              delayPressIn={0}
+              hitSlop={HIT_SLOP}
+              onPress={share}
+            >
+              <PeopleIcon />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              delayPressIn={0}
+              hitSlop={HIT_SLOP}
+              onPress={share}
+            >
+              <InviteIcon />
+            </TouchableOpacity>
           </>
         ) : (
-          <ShareIcon />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            delayPressIn={0}
+            hitSlop={HIT_SLOP}
+            onPress={share}
+          >
+            <ShareIcon />
+          </TouchableOpacity>
         )}
         <CountChip
           variant={isEvent ? 'join' : 'emotion'}
@@ -543,13 +583,17 @@ const PostCard = memo(({ item }) => {
   const navigation = useNavigation();
   const [open, setOpen] = useState(false);
   const openPoster = () => {
+    if (item.type === 'event') {
+      navigation.navigate(ROUT_NAMES.EVENT, { post: item });
+      return;
+    }
     navigation.navigate(ROUT_NAMES.BUSINESS, {
       name: item.author === 'Armenia hotel' ? 'Արմենիա հյուրանոց' : item.author,
       handle: `@${String(item.author).toLowerCase()}`,
       logo: item.logo,
-      description: item.description,
+      description: item.details || item.description,
       location: item.location,
-      initialTab: item.type === 'event' ? 'event' : 'gallery',
+      initialTab: 'gallery',
     });
   };
 
@@ -614,11 +658,13 @@ const PostCard = memo(({ item }) => {
             item.type === 'business' && styles.descriptionTight,
           ]}
         >
-          {t(item.description)}
+          {t(open && item.details ? item.details : item.description)}
         </Text>
-        <TouchableOpacity onPress={() => setOpen(value => !value)}>
-          <Text style={styles.more}>{open ? t('փակել') : t('more')}</Text>
-        </TouchableOpacity>
+        {item.details ? (
+          <TouchableOpacity onPress={() => setOpen(value => !value)}>
+            <Text style={styles.more}>{open ? t('փակել') : t('more')}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
 
       {item.location ? (
@@ -649,7 +695,7 @@ const renderPost = ({ item }) => <PostCard item={item} />;
 const HomeScreen = ({ navigation }) => {
   const t = useT();
   const user = useProfile();
-  const [city, setCity] = useState(user.city || 'Երևան');
+  const [city, setCity] = useState(() => toPhrase(user.city) || 'Երևան');
   const [cityOpen, setCityOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState(
@@ -660,7 +706,7 @@ const HomeScreen = ({ navigation }) => {
     setSelectedIds(current => (current.size ? current : new Set(user.emotions.map(item => item.id))));
   }, [user.emotions]);
   const remoteCities = useApiList(getCities);
-  const cityNames = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
+  const cityNames = pickCities(remoteCities ? remoteCities.map(nameOf) : CITY_NAMES).map(toPhrase);
   const needle = query.trim().toLowerCase();
   const feed = FEED.filter(item => {
     const matchesEmotion =

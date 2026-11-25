@@ -100,9 +100,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     flexDirection: 'row',
     alignItems: 'flex-end',
+    justifyContent: 'space-between',
     paddingHorizontal: normalize(18),
     paddingBottom: normalize(16),
-    gap: normalize(24),
   },
   featuredIcon: {
     width: normalize(60),
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   featuredText: {
     flex: 1,
     gap: normalize(8),
+    marginLeft: normalize(24),
   },
   featuredTitle: {
     fontFamily: Fonts.arm.semi_bold,
@@ -143,8 +144,9 @@ const styles = StyleSheet.create({
     borderColor: '#EEEEEE',
     backgroundColor: COLORS.white,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingHorizontal: normalize(8),
+    paddingBottom: normalize(15),
     gap: normalize(8),
   },
   categoryIcon: {
@@ -157,6 +159,12 @@ const styles = StyleSheet.create({
   },
   categoryBody: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: normalize(4),
+  },
+  categoryCopy: {
+    flex: 1,
   },
   categoryTitleRow: {
     flexDirection: 'row',
@@ -166,7 +174,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontFamily: Fonts.arm.semi_bold,
     fontSize: normalize(12),
-    lineHeight: normalize(16),
+    lineHeight: normalize(22),
     color: COLORS.black[50],
     flexShrink: 1,
   },

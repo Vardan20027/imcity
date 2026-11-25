@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     marginTop: normalize(24),
   },
   dream: {
-    height: normalize(40),
+    height: normalize(46),
     marginHorizontal: normalize(16),
     marginTop: normalize(24),
   },
@@ -30,15 +30,12 @@ const styles = StyleSheet.create({
     borderRadius: normalize(10),
     backgroundColor: '#FF8700',
   },
-  dreamHeart: {
+  dreamMarker: {
     position: 'absolute',
-    left: 0,
     top: 0,
+    alignItems: 'center',
   },
   dreamCount: {
-    position: 'absolute',
-    left: normalize(30),
-    top: normalize(20),
     fontFamily: Fonts.arm.regular,
     fontSize: normalize(14),
     lineHeight: normalize(22),
@@ -107,16 +104,23 @@ const styles = StyleSheet.create({
   empty: {
     alignItems: 'center',
     marginTop: normalize(110),
+    paddingHorizontal: normalize(36),
   },
-  emptyInList: {
-    alignItems: 'center',
-    marginTop: normalize(24),
+  emptyTitle: {
+    marginTop: normalize(18),
+    fontFamily: Fonts.arm.semi_bold,
+    fontSize: normalize(16),
+    lineHeight: normalize(22),
+    color: COLORS.black[50],
+    textAlign: 'center',
   },
-  emptyArt: {
-    width: normalize(256),
-    height: normalize(226),
-    borderRadius: normalize(12),
-    backgroundColor: '#F3F3F3',
+  emptyText: {
+    marginTop: normalize(8),
+    fontFamily: Fonts.arm.regular,
+    fontSize: normalize(12),
+    lineHeight: normalize(18),
+    color: '#B5B5B5',
+    textAlign: 'center',
   },
 });
 

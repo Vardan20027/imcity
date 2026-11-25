@@ -1,5 +1,3 @@
-export const CITIES = ['Երևան', 'Կապան', 'Գորիս', 'Գյումրի', 'Արարատ'];
-
 export const HOTEL_LOGO = require('../../../assets/images/services/hotel-logo.png');
 export const REST_LOGO = require('../../../assets/images/services/rest-logo.png');
 export const FUN_LOGO = require('../../../assets/images/services/fun-logo.png');
@@ -102,6 +100,26 @@ export const SERVICE_CATEGORIES = [
   { id: 'clean', icon: 'svc_clean', title: 'Մաքրման ծառայություններ' },
   { id: 'security', icon: 'svc_security', title: 'Անվտանգություն' },
 ];
+
+export const matchesCategory = (place, key, title) => {
+  const blob = [
+    place?.category?.slug,
+    place?.category?.name,
+    place?.category?.title,
+    place?.category_name,
+    typeof place?.category === 'string' ? place.category : '',
+    place?.type,
+    place?.slug,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  if (!blob) return false;
+  return [key, title].some(value => {
+    const needle = String(value || '').trim().toLowerCase();
+    return needle && blob.includes(needle);
+  });
+};
 
 export const GRID_BY_KEY = {
   hotels: HOTELS,

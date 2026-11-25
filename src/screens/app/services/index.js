@@ -8,31 +8,54 @@ import { ICON_NAMES } from '../../../components/svgs/icon_names';
 import { COLORS } from '../../../assets/rootStyles';
 import { ROUT_NAMES } from '../../../constants/rout';
 import { EmotionMarks, SearchField, ServiceIcon } from './parts';
-import { CITIES, SERVICE_CATEGORIES, SHOPS } from './data';
+import { SERVICE_CATEGORIES, SHOPS } from './data';
+import { CITY_NAMES, pickCities } from '../../../constants/cities';
 import { AttractionsScreen, AttractionDetailScreen } from './attractions';
 import { CategoryListScreen, PlaceGridScreen } from './lists';
 import { useApiList } from '../../../state/reads/useList';
 import { getCategories, getCities } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
+import { toPhrase } from '../../../locales/catalog';
 import { useT } from '../../../locales/useT';
 import styles from './styles';
 
 const Stack = createNativeStackNavigator();
 
 const CATEGORIES = [
-  { key: 'restaurants', title: 'Ռեստորաններ', icon: 'restaurant', screen: 'grid' },
-  { key: 'hotels', title: 'Հյուրանոցներ', icon: 'hotel', screen: 'grid' },
-  { key: 'cafes', title: 'Սրճարաններ', icon: 'cafe', screen: 'grid' },
-  { key: 'entertainment', title: 'Ժամանց', icon: 'entertainment', screen: 'grid' },
-  { key: 'tourism', title: 'Տուրիզմ', icon: 'tourism', screen: 'grid' },
-  { key: 'rest', title: 'Հանգստի վայրեր', icon: 'rest', screen: 'grid' },
-  { key: 'shops', title: 'Խանութներ', icon: 'shops', screen: 'shops', chevron: true },
-  { key: 'transport', title: 'Տրանսպորտ', icon: 'transport', screen: 'grid' },
-  { key: 'charging', title: 'Լիցքավորում', icon: 'charging', screen: 'grid' },
-  { key: 'services', title: 'Ծառայութ-ներ', icon: 'services', screen: 'services', chevron: true },
-  { key: 'production', title: 'Արտադրություն', icon: 'production', screen: 'grid' },
-  { key: 'medicine', title: 'Բժշկություն', icon: 'medicine', screen: 'grid' },
+  { key: 'restaurants', title: 'Ռեստորաններ', icon: 'restaurant', screen: 'grid', count: '112' },
+  { key: 'hotels', title: 'Հյուրանոցներ', icon: 'hotel', screen: 'grid', count: '112' },
+  { key: 'cafes', title: 'Սրճարաններ', icon: 'cafe', screen: 'grid', count: '112' },
+  { key: 'entertainment', title: 'Ժամանց', icon: 'entertainment', screen: 'grid', count: '112' },
+  { key: 'tourism', title: 'Տուրիզմ', icon: 'tourism', screen: 'grid', count: '112' },
+  { key: 'rest', title: 'Հանգստի վայրեր', icon: 'rest', screen: 'grid', count: '112' },
+  { key: 'shops', title: 'Խանութներ', icon: 'shops', screen: 'shops', chevron: true, count: '112' },
+  { key: 'transport', title: 'Տրանսպորտ', icon: 'transport', screen: 'grid', count: '112' },
+  { key: 'charging', title: 'Լիցքավորում', icon: 'charging', screen: 'grid', count: '112' },
+  { key: 'services', title: 'Ծառայութ-ներ', icon: 'services', screen: 'services', chevron: true, count: '112' },
+  { key: 'production', title: 'Արտադրություն', icon: 'production', screen: 'grid', count: '112' },
+  { key: 'medicine', title: 'Բժշկություն', icon: 'medicine', screen: 'grid', count: '112' },
 ];
+
+const BY_SLUG = {
+  attractions: { key: 'attraction', title: 'Տեսարժան վայրեր', icon: 'attraction', screen: 'attractions' },
+  hotels: { key: 'hotels', title: 'Հյուրանոցներ', icon: 'hotel', screen: 'grid' },
+  eat: { key: 'restaurants', title: 'Ռեստորաններ', icon: 'restaurant', screen: 'grid' },
+  tourism: { key: 'tourism', title: 'Տուրիզմ', icon: 'tourism', screen: 'grid' },
+  'vacation-spots': { key: 'rest', title: 'Հանգստի վայրեր', icon: 'rest', screen: 'grid' },
+  entertainment: { key: 'entertainment', title: 'Ժամանց', icon: 'entertainment', screen: 'grid' },
+  transport: { key: 'transport', title: 'Տրանսպորտ', icon: 'transport', screen: 'grid' },
+  refills: { key: 'charging', title: 'Լիցքավորում', icon: 'charging', screen: 'grid' },
+  store: { key: 'shops', title: 'Խանութներ', icon: 'shops', screen: 'shops', chevron: true },
+  services: { key: 'services', title: 'Ծառայութ-ներ', icon: 'services', screen: 'services', chevron: true },
+  production: { key: 'production', title: 'Արտադրություն', icon: 'production', screen: 'grid' },
+  medicine: { key: 'medicine', title: 'Բժշկություն', icon: 'medicine', screen: 'grid' },
+};
+
+const placeCount = item => {
+  const value = item?.places_count ?? item?.count ?? item?.total ?? item?.places;
+  if (value == null || value === '') return '';
+  return String(value);
+};
 
 const ServicesHome = ({ navigation }) => {
   const t = useT();
@@ -42,23 +65,39 @@ const ServicesHome = ({ navigation }) => {
   const remoteCategories = useApiList(getCategories);
   const remoteCities = useApiList(getCities);
   const categories = remoteCategories
-    ? remoteCategories.map((item, index) => {
-        const fallback = CATEGORIES[index % CATEGORIES.length];
-        return {
-          key: String(item?.id ?? item?.slug ?? index),
-          title: nameOf(item) || fallback.title,
-          icon: fallback.icon,
-          screen: 'grid',
-        };
-      }).filter(item => item.title)
+    ? remoteCategories
+        .filter(item => item?.slug !== 'attractions')
+        .map((item, index) => {
+          const known =
+            BY_SLUG[item?.slug] ||
+            CATEGORIES.find(category => category.title === toPhrase(nameOf(item)));
+          const fallback = known || CATEGORIES[index % CATEGORIES.length];
+          return {
+            key: known?.key || String(item?.id ?? item?.slug ?? index),
+            title: known?.title || toPhrase(nameOf(item)) || fallback.title,
+            icon: known?.icon || fallback.icon,
+            screen: known?.screen || 'grid',
+            chevron: known?.chevron,
+            count: placeCount(item) || '112',
+          };
+        })
+        .filter(item => item.title)
     : CATEGORIES;
-  const cityNames = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
+  const featuredCount =
+    placeCount(
+      (remoteCategories || []).find(item => /տեսարժան|attraction/i.test(nameOf(item))),
+    ) || '148';
+  const cityNames = pickCities(remoteCities ? remoteCities.map(nameOf) : CITY_NAMES).map(toPhrase);
 
   const onNotifications = useCallback(() => {
     navigation.navigate(ROUT_NAMES.NOTIFICATIONS);
   }, [navigation]);
 
   const openCategory = item => {
+    if (item.screen === 'attractions') {
+      navigation.navigate('Attractions');
+      return;
+    }
     if (item.screen === 'shops') {
       navigation.navigate('CategoryList', { title: 'Խանութներ', items: SHOPS });
       return;
@@ -73,9 +112,8 @@ const ServicesHome = ({ navigation }) => {
     navigation.navigate('PlaceGrid', { title: item.title, key: item.key });
   };
 
-  const visible = categories.filter(item =>
-    item.title.toLowerCase().includes(query.trim().toLowerCase()),
-  );
+  const needle = query.trim().toLowerCase();
+  const visible = categories.filter(item => t(item.title).toLowerCase().includes(needle));
   const showFeatured = 'տեսարժան վայրեր'.includes(query.trim().toLowerCase()) || !query.trim();
 
   return (
@@ -121,6 +159,7 @@ const ServicesHome = ({ navigation }) => {
               <Text style={styles.featuredTitle}>{t('Տեսարժան վայրեր')}</Text>
               <EmotionMarks size={16} />
             </View>
+            <Text style={styles.featuredCount}>{featuredCount}</Text>
           </TouchableOpacity>
         ) : null}
         <View style={styles.grid}>
@@ -135,13 +174,16 @@ const ServicesHome = ({ navigation }) => {
                 <ServiceIcon name={item.icon} size={18} />
               </View>
               <View style={styles.categoryBody}>
-                <View style={styles.categoryTitleRow}>
-                  <Text style={styles.categoryTitle} numberOfLines={1}>
-                    {t(item.title)}
-                  </Text>
-                  {item.chevron ? <ServiceIcon name="chevron" size={16} /> : null}
+                <View style={styles.categoryCopy}>
+                  <View style={styles.categoryTitleRow}>
+                    <Text style={styles.categoryTitle} numberOfLines={1}>
+                      {t(item.title)}
+                    </Text>
+                    {item.chevron ? <ServiceIcon name="chevron" size={16} /> : null}
+                  </View>
+                  <EmotionMarks size={12} />
                 </View>
-                <EmotionMarks size={12} />
+                <Text style={styles.categoryCount}>{item.count}</Text>
               </View>
             </TouchableOpacity>
           ))}

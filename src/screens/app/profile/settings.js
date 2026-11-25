@@ -61,6 +61,8 @@ import { useContainer } from './hook';
 import { birthdayForApi, formatBirthday, parseBirthday } from '../../../utils/birthday';
 import { currentLanguage, setLanguage } from '../../../services/language';
 import { useT } from '../../../locales/useT';
+import { toPhrase } from '../../../locales/catalog';
+import { pickCities } from '../../../constants/cities';
 import { useApiList } from '../../../state/reads/useList';
 import { getCities, getEmotions } from '../../../state/reads/operations';
 import { nameOf } from '../../../state/reads/shape';
@@ -288,7 +290,7 @@ export const EditProfileScreen = ({ navigation }) => {
           icon={<MIcon name={ICON_NAMES.CALENDAR} width={normalize(18)} height={normalize(18)} />}
         />
         <Field label="Սեռ" value={t(gender)} onPress={() => setGenderOpen(true)} icon={<ChevronRight />} />
-        <Field label="Քաղաք" value={city} onPress={() => setCityOpen(true)} icon={<ChevronRight />} />
+        <Field label="Քաղաք" value={t(city)} onPress={() => setCityOpen(true)} icon={<ChevronRight />} />
       </View>
       <CenterCard visible={photoOpen} onClose={() => setPhotoOpen(false)}>
         <TouchableOpacity style={styles.optionRow} onPress={() => uploadPhoto(launchCamera)}>
@@ -344,7 +346,7 @@ export const EditProfileScreen = ({ navigation }) => {
               }}
             >
               <Text style={styles.optionText}>{t(item)}</Text>
-              {city === item ? (
+              {toPhrase(city) === item ? (
                 <MIcon name={ICON_NAMES.CHECKMARK} width={normalize(18)} height={normalize(18)} />
               ) : null}
             </TouchableOpacity>
@@ -368,9 +370,9 @@ export const CityScreen = ({ navigation }) => {
   const t = useT();
   const user = useProfile();
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState(user.city);
+  const [selected, setSelected] = useState(toPhrase(user.city));
   const remoteCities = useApiList(getCities);
-  const source = remoteCities ? remoteCities.map(nameOf).filter(Boolean) : CITIES;
+  const source = pickCities(remoteCities ? remoteCities.map(nameOf) : CITIES).map(toPhrase);
   const cities = source.filter(item => t(item).toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Screen scroll>
@@ -1096,17 +1098,7 @@ export const SupportChatScreen = ({ navigation }) => {
   return (
     <Screen
       footer={
-        <ChatComposer
-          value={text}
-          onChangeText={setText}
-          onSend={send}
-          onVoice={note =>
-            setMessages(list => [
-              ...list,
-              { id: `voice-${Date.now()}`, type: 'voice', mine: true, ...note },
-            ])
-          }
-        />
+        <ChatComposer value={text} onChangeText={setText} onSend={send} />
       }
     >
       <PageHeader title="Կապ մեզ հետ" onBack={() => navigation.goBack()} />
